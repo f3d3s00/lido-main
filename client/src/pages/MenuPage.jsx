@@ -30,7 +30,7 @@ export default function MenuPage() {
   if (errorCategories) return <p className="text-red-500">{errorCategories}</p>;
 
   return (
-    <div className="bg-gradient-to-b from-lime-50 to-lime-600 min-h-screen p-4">
+    <div className="bg-gradient-to-br from-blue-300 to-amber-500 min-h-screen p-4">
       <div className="max-w-md mx-auto">
         <div className="flex flex-col gap-2 mb-6">
           {categories.map((cat) => (
@@ -39,7 +39,7 @@ export default function MenuPage() {
               className={`w-full px-4 py-3 rounded-2xl font-semibold transition shadow hover:shadow-lg active:scale-95 ${
                 selectedCategory?.id_categoria === cat.id_categoria
                   ? "bg-lime-500 text-white"
-                  : "bg-white hover:bg-lime-100 text-gray-800"
+                  : "bg-blue-100 hover:bg-amber-400  text-gray-800"
               }`}
               onClick={() => setSelectedCategory(cat)}
             >
