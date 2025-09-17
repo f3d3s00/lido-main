@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTable } from "../context/TableContext";
+import { QrReader } from "react-qr-reader";
 
 export default function ScanPage() {
   const { setTableId } = useTable();
@@ -52,6 +53,12 @@ export default function ScanPage() {
 
       {useScanner ? (
         <div className="w-full max-w-sm bg-white rounded-xl shadow p-3">
+          <QrReader
+            constraints={{ facingMode: "environment" }}
+            onResult={handleQRResult}
+            containerStyle={{ width: "100%" }}
+            videoContainerStyle={{ borderRadius: "0.75rem", overflow: "hidden" }}
+          />
         </div>
       ) : (
         <div className="w-full max-w-sm bg-white rounded-xl shadow p-4 flex flex-col gap-3">

@@ -1,6 +1,5 @@
 generator client {
-  provider      = "prisma-client-js"
-  binaryTargets = ["native", "darwin-arm64"]
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -22,13 +21,7 @@ model ombrellone {
   ordine            ordine[]
 }
 
-model ombrelloni {
-  id_ombrellone     Int      @id @default(autoincrement())
-  fila              String?  @db.VarChar(10)
-  numero_ombrellone Int?
-  stato_ombrellone  String?  @db.VarChar(50)
-  ordini            ordini[]
-}
+
 
 model ordine {
   id_ordine      Int              @id @default(autoincrement())
@@ -41,28 +34,6 @@ model ordine {
   @@index([id_ombrellone], map: "Ordine_id_ombrellone_fkey")
 }
 
-model ordini {
-  id_ordine       Int               @id @default(autoincrement())
-  id_ombrellone   Int?
-  data_ordine     DateTime?         @default(now()) @db.DateTime(0)
-  stato_ordine    String?           @db.VarChar(50)
-  ombrelloni      ombrelloni?       @relation(fields: [id_ombrellone], references: [id_ombrellone], onDelete: NoAction, onUpdate: NoAction, map: "ordini_ibfk_1")
-  ordini_prodotti ordini_prodotti[]
-
-  @@index([id_ombrellone], map: "id_ombrellone")
-}
-
-model ordini_prodotti {
-  id_ordine_prodotto Int       @id @default(autoincrement())
-  id_ordfine         Int?
-  id_prodotto        Int?
-  quantita           Int?
-  prezzo             Decimal?  @db.Decimal(10, 2)
-  ordini             ordini?   @relation(fields: [id_ordfine], references: [id_ordine], onDelete: NoAction, onUpdate: NoAction, map: "ordini_prodotti_ibfk_1")
-
-  @@index([id_ordfine], map: "id_ordfine")
-  @@index([id_prodotto], map: "id_prodotto")
-}
 
 model ordiniprodotti {
   id_ordine_prodotto Int      @id @default(autoincrement())

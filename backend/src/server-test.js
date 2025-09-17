@@ -45,5 +45,5 @@ app.get("/api/prodotti", (req, res) => {
 });
 
 // Avvio server
-const PORT = 5000;
+const PORT = 4000;
 app.listen(PORT, () => console.log(`Server di test attivo su http://localhost:${PORT}`));

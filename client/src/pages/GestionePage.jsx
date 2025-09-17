@@ -20,6 +20,7 @@ export default function GestionePage() {
 
   const fetchOrdini = async () => {
     try {
+      console.log("sto chiamando fetch ordini")
       const res = await fetch("http://localhost:4000/api/ordini");
       if (!res.ok) throw new Error(`Errore API ordini: ${res.status}`);
       setOrdini(await res.json());
@@ -28,6 +29,10 @@ export default function GestionePage() {
       setMessage("Errore caricamento ordini");
     }
   };
+  
+
+  setTimeout(() => fetchOrdini(), 4000);
+  
   const fetchCategorie = async () => {
     try {
       const res = await fetch("http://localhost:4000/api/categorie");
