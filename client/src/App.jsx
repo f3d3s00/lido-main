@@ -4,7 +4,7 @@ import { CartProvider, useCart } from "./context/CartContext";
 import { TableProvider } from "./context/TableContext";
 
 
-import Home from "./pages/Home";
+import Home from "./pages/Home"
 import MenuPage from "./pages/MenuPage";
 import CategoryPage from "./pages/CategoryPage";
 import CartPage from "./pages/CartPage";
@@ -40,6 +40,7 @@ function App() {
         <Router>
           <AuthProvider>
             <Routes>
+            <Route path="/" element={<Home />} />
               <Route path="/menu" element={<MenuPage />} />
               <Route path="/category/:id" element={<CategoryPage />} />
               <Route path="/checkout" element={<CheckoutPage />} />

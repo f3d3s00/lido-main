@@ -43,6 +43,7 @@ export default function GestionePage() {
     } catch (err) {
       console.error("Errore caricamento categorie:", err);
       setMessage("Errore caricamento categorie");
+      
     }
   };
   const fetchProdotti = async () => {
