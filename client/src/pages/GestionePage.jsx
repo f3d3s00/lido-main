@@ -29,10 +29,12 @@ export default function GestionePage() {
       setMessage("Errore caricamento ordini");
     }
   };
-  
 
-  setTimeout(() => fetchOrdini(), 4000);
-  
+  useEffect(() => {
+    const interval = setInterval(() => fetchOrdini(), 10000);
+    return () => clearInterval(interval);
+  }, []);
+
   const fetchCategorie = async () => {
     try {
       const res = await fetch("http://localhost:4000/api/categorie");
