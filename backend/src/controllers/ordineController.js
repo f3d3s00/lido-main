@@ -1,4 +1,4 @@
-const db = require("../db"); // il tuo file di connessione MySQL, es: db.js con mysql.createPool
+const db = require("../db"); 
 
 exports.createOrder = async (req, res) => {
   try {

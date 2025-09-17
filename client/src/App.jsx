@@ -11,6 +11,10 @@ import CartPage from "./pages/CartPage";
 import CheckoutPage from "./pages/CheckoutPage";
 import CartSidebar from "./components/CartSidebar";
 import GestionePage from "./pages/GestionePage";
+import { AuthProvider } from "./context/AuthContext";
+import LoginPage from "./pages/LoginPage";
+import PrivateRoute from "./components/PrivateRoute";
+
 
 
 
@@ -31,27 +35,31 @@ function CartIconButton() {
 
 function App() {
   return (
-    <TableProvider>
+<TableProvider>
       <CartProvider>
         <Router>
-          {/* Rotte principali */}
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/menu" element={<MenuPage />} />
-            <Route path="/category/:id" element={<CategoryPage />} />
-            <Route path="/checkout" element={<CheckoutPage />} />
-            <Route path="/gestione" element={<GestionePage />} />
-          </Routes>
+          <AuthProvider>
+            <Routes>
+              <Route path="/menu" element={<MenuPage />} />
+              <Route path="/category/:id" element={<CategoryPage />} />
+              <Route path="/checkout" element={<CheckoutPage />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route
+                path="/gestione"
+                element={
+                  <PrivateRoute>
+                    <GestionePage />
+                  </PrivateRoute>
+                }
+              />
+            </Routes>
 
-          {/* Sidebar sempre presente ma nascosta */}
-          <CartSidebar />
-
-          {/* Icona carrello sempre visibile */}
-          <CartIconButton />
+            <CartSidebar />
+            <CartIconButton />
+          </AuthProvider>
         </Router>
       </CartProvider>
-    </TableProvider>
-  );
+    </TableProvider>  );
 }
 
 export default App;
