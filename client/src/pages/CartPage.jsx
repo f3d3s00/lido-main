@@ -7,7 +7,7 @@ export default function CartPage() {
     <div className="p-4 max-w-md mx-auto">
       <h1 className="text-xl font-bold mb-4">Il tuo carrello</h1>
       {cartItems.length === 0 ? (
-        <p>Il carrello è vuoto</p>
+        <p>Il carrello è vuotooo</p>
       ) : (
         <>
           <div className="flex flex-col gap-2">
