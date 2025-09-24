@@ -23,9 +23,9 @@ export default function CartSidebar() {
           <ul className="space-y-4 flex-1">
             {cartItems.map((item, idx) => (
               <li key={item.id_prodotto ? item.id_prodotto : idx} className="flex items-center space-x-4">
-                <img src={item.img_prodotto} alt={item.descrizione} className="w-16 h-16 object-cover rounded" />
+                <img src={item.img_prodotto} alt={item.nome} className="w-16 h-16 object-cover rounded" />
                 <div className="flex-1">
-                  <h3 className="font-semibold">{item.descrizione}</h3>
+                  <h3 className="font-semibold">{item.nome}</h3>
                   <div className="flex items-center mt-2 space-x-2">
                     <button
                       onClick={() => decreaseQuantity(item.id_prodotto)}

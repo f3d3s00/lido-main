@@ -81,8 +81,9 @@ router.post("/", async (req, res) => {
     res.status(201).json(ordine);
   } catch (err) {
     console.error("Errore creazione ordine:", err);
-    res.status(500).json({ error: "Errore nella creazione dell'ordine" });
+    res.status(500).json({ error: "Errore nella creazione dell'ordine", details: err.message });
   }
+  
 });
 
 export default router;

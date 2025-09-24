@@ -16,7 +16,7 @@ export default function ProductModal({ product, onClose, onAddToCart }) {
           className="w-full h-60 object-cover rounded"
         />
         <h2 className="mt-4 text-xl font-bold">{product.name}</h2>
-        <p className="mt-2 text-gray-300">{product.descrizione}</p>
+        <p className="mt-2 text-gray-300">{product.nome}</p>
         <p className="mt-2 font-bold">{product.prezzo.toFixed(2)} €</p>
         <button
           onClick={() => { onAddToCart(product); onClose(); }}

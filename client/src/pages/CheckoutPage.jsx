@@ -29,7 +29,17 @@ export default function CheckoutPage() {
         })),
       };
 
+      // 1. Crea ordine
       await createOrder(ordine);
+
+      // 2. Libera l’ombrellone dopo l’ordine
+      await fetch("http://localhost:4000/api/ombrelloni/libera", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ numero_ombrellone: tableId }),
+      });
+
+      // 3. Success
       setSuccess(true);
       clearCart();
     } catch (err) {
@@ -57,7 +67,7 @@ export default function CheckoutPage() {
 
   return (
     <div className="p-6 bg-gradient-to-b from-lime-50 to-lime-600 min-h-screen rounded-xl shadow-md">
-      <h2 className="text-xl font-bold mb-4">Riepilogo Ordine - Tavolo {tableId}</h2>
+      <h2 className="text-xl font-bold mb-4">Riepilogo Ordine - Ombrellone {tableId}</h2>
 
       {cartItems.length === 0 ? (
         <p>Il carrello è vuoto.</p>
@@ -66,10 +76,10 @@ export default function CheckoutPage() {
           <ul className="space-y-2">
             {cartItems.map((item, index) => (
               <li
-                key={item.id_prodotto ? `${item.id_prodotto}-${index}` : index} // MODIFICATO: chiave unica
+                key={item.id_prodotto ? `${item.id_prodotto}-${index}` : index}
                 className="flex justify-between border-b pb-2"
               >
-                <span>{item.descrizione} x {item.quantity}</span>
+                <span>{item.nome} x {item.quantity}</span>
                 <span className="font-semibold">{(item.prezzo * item.quantity).toFixed(2)} €</span>
               </li>
             ))}

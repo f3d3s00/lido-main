@@ -94,10 +94,10 @@ function CategoryProducts({ categoryId, addToCart }) {
         >
           <img
             src={product.img_prodotto}
-            alt={product.descrizione}
+            alt={product.nome}
             className="w-full h-48 object-cover rounded-2xl mb-3"
           />
-          <h3 className="text-lg font-bold text-gray-800">{product.descrizione}</h3>
+          <h3 className="text-lg font-bold text-gray-800">{product.nome}</h3>
           <p className="text-gray-600 mt-1">€ {(Number(product.prezzo) || 0).toFixed(2)}</p>
           <button
             onClick={() => addToCart(product)}
