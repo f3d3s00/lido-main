@@ -15,15 +15,16 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-lime-50 to-lime-100 flex flex-col items-center justify-center p-6 gap-6">
-      <h1 className="text-3xl font-bold text-gray-800">Benvenuto 👋</h1>
-      <p className="text-gray-600 text-center">
-        Inserisci l’ID manualmente.
-      </p>
-
-      
-        <div className="w-full max-w-sm bg-white rounded-xl shadow p-4 flex flex-col gap-3">
-          <label className="text-sm text-gray-600">ID Tavolo / Ombrellone</label>
+    <div className="relative min-h-screen flex flex-col items-center justify-center p-6 gap-6 overflow-hidden">
+      {/* Sfondo immagine */}
+     <div className="absolute inset-0 z-10 bg-[url('/img/sfondo.png')] bg-center bg-no-repeat bg-fixed" />
+      {/* Overlay gradiente sopra l'immagine */}
+      <div className="absolute inset-0 z-0 bg-gradient-to-r from-[#ffde59] to-[#ff914D]" />
+      <div className="relative z-20 flex flex-col items-center w-auto justify-start min-h-screen pt-2 sm:pt-2 md:pt-6 lg:pt-8 xl:pt-12">
+      <span className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-serif font-extrabold text-orange-700 text-shadow-sm shadow-gray-700 ">Benvenuto</span>
+       
+        <div className="w-full max-w-sm rounded-xl shadow p-4 flex flex-col gap-3 mt-70 ">
+          <label className="text-m text-black font-bold text-center w-full">Numero Ombrellone</label>
           <input
             type="text"
             className="border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-lime-500"
@@ -32,12 +33,13 @@ export default function Home() {
             onChange={(e) => setManual(e.target.value)}
           />
           <button
-            className="bg-lime-400 hover:bg-lime-500 text-white px-6 py-2 rounded-lg shadow transition"
+            className="bg-orange-700 hover:bg-gradient-to-l hover:from-[#ff914D] hover:to-[#ffde59] text-white px-6 py-2 rounded-lg shadow transition"
             onClick={onManualConfirm}
           >
             Continua
           </button>
         </div>
+      </div>
     </div>
   );
 }

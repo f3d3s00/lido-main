@@ -1,4 +1,5 @@
 // src/context/CartContext.jsx
+
 import { createContext, useState, useContext } from "react";
 
 const CartContext = createContext();
@@ -55,6 +56,9 @@ export function CartProvider({ children }) {
     0
   );
 
+  // Calcola il totale dei prodotti nel carrello
+  const totalQuantity = cartItems.reduce((acc, item) => acc + item.quantity, 0);
+
   return (
     <CartContext.Provider
       value={{
@@ -63,10 +67,11 @@ export function CartProvider({ children }) {
         removeFromCart,
         increaseQuantity,
         decreaseQuantity,
-        clearCart,       // 👈 aggiunto qui
+        clearCart,
         isSidebarOpen,
         toggleSidebar,
         totalPrice,
+        totalQuantity,
       }}
     >
       {children}
@@ -77,3 +82,4 @@ export function CartProvider({ children }) {
 export function useCart() {
   return useContext(CartContext);
 }
+

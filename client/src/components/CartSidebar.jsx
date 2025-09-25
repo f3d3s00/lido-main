@@ -8,8 +8,9 @@ export default function CartSidebar() {
 
   return (
     <div
-      className={`fixed top-0 right-0 h-full w-80 bg-white shadow-xl transform transition-transform duration-300 z-50
-        ${isSidebarOpen ? "translate-x-0" : "translate-x-full"}`}
+  className={`fixed top-0 right-0 h-full w-80 shadow-xl transform transition-transform duration-300 z-50 border-4 border-red-500
+    ${isSidebarOpen ? "translate-x-0" : "translate-x-full"}`}
+  style={{ background: "linear-gradient(135deg, #ffde5990 0%, #ff914d90 100%)" }}
     >
       <div className="flex justify-between items-center p-4 border-b">
         <h2 className="text-xl font-bold">Carrello</h2>
@@ -60,7 +61,7 @@ export default function CartSidebar() {
               navigate("/checkout");
               toggleSidebar();
             }}
-            className="w-full bg-lime-500 text-white py-3 rounded-xl shadow-md hover:bg-lime-600 transition"
+            className="w-full bg-gradient-to-l from-[#ff914D] to-[#ffde59] text-white py-3 rounded-xl shadow-md hover:from-[#ffde59] hover:to-[#ff914D] transition font-bold border-2 border-orange-400"
           >
             Conferma Ordine
           </button>

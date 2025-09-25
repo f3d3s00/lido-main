@@ -1,6 +1,8 @@
 // src/pages/MenuPage.jsx
 import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import { useCart } from "../context/CartContext";
+
 
 export default function MenuPage() {
   const [categories, setCategories] = useState([]);
@@ -8,7 +10,9 @@ export default function MenuPage() {
   const [loadingCategories, setLoadingCategories] = useState(true);
   const [errorCategories, setErrorCategories] = useState(null);
   const { addToCart } = useCart();
+  const [searchParams] = useSearchParams();
 
+  // Carica le categorie e seleziona quella da query string (solo al primo caricamento)
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -16,6 +20,12 @@ export default function MenuPage() {
         if (!res.ok) throw new Error("Errore nel caricamento delle categorie");
         const data = await res.json();
         setCategories(data);
+        // Se c'è una categoria nella query string, selezionala
+        const catId = searchParams.get("categoria");
+        if (catId) {
+          const found = data.find((c) => String(c.id_categoria) === String(catId));
+          if (found) setSelectedCategory(found);
+        }
       } catch (err) {
         console.error(err);
         setErrorCategories(err.message);
@@ -24,24 +34,42 @@ export default function MenuPage() {
       }
     };
     fetchCategories();
+    // eslint-disable-next-line
   }, []);
+
+  // Ogni volta che cambia la query string, seleziona la categoria giusta
+  useEffect(() => {
+    if (!categories.length) return;
+    const catId = searchParams.get("categoria");
+    if (catId) {
+      const found = categories.find((c) => String(c.id_categoria) === String(catId));
+      if (found) setSelectedCategory(found);
+    }
+  }, [searchParams, categories]);
 
   if (loadingCategories) return <p>Caricamento categorie...</p>;
   if (errorCategories) return <p className="text-red-500">{errorCategories}</p>;
 
   return (
-    <div className="bg-gradient-to-br from-blue-300 to-amber-500 min-h-screen p-4">
-      <div className="max-w-md mx-auto">
+  <div className="bg-gradient-to-r from-[#ffde59] to-[#ff914D] min-h-screen p-4 flex flex-col items-center justify-center">
+    <div className="absolute inset-0 z-0 bg-[url('/img/sfondo.png')] bg-center bg-no-repeat bg-fixed" />    
+    <div className="w-full max-w-md bg-white/10 backdrop-blur-md rounded-2xl shadow-xl p-6 flex flex-col gap-6">
         <div className="flex flex-col gap-2 mb-6">
           {categories.map((cat) => (
             <button
               key={cat.id_categoria}
-              className={`w-full px-4 py-3 rounded-2xl font-semibold transition shadow hover:shadow-lg active:scale-95 ${
+              className={`w-full px-4 py-3 rounded-2xl font-semibold transition shadow hover:shadow-lg active:scale-95 border-2 border-yellow-200 ${
                 selectedCategory?.id_categoria === cat.id_categoria
-                  ? "bg-lime-500 text-white"
-                  : "bg-blue-100 hover:bg-amber-400  text-gray-800"
+                  ? "bg-gradient-to-l from-[#ff914D] to-[#ffde59] text-white border-orange-500"
+                  : "bg-gradient-to-l from-[#ffde59]/60 to-[#ff914D]/60 text-yellow-900 hover:bg-lime-100/60"
               }`}
-              onClick={() => setSelectedCategory(cat)}
+              onClick={() => {
+                if (selectedCategory?.id_categoria === cat.id_categoria) {
+                  setSelectedCategory(null);
+                } else {
+                  setSelectedCategory(cat);
+                }
+              }}
             >
               {cat.denominazione}
             </button>
@@ -90,7 +118,7 @@ function CategoryProducts({ categoryId, addToCart }) {
       {products.map((product) => (
         <div
           key={product.id_prodotto}
-          className="bg-white rounded-3xl shadow-md hover:shadow-xl transition p-4 flex flex-col"
+          className="bg-gradient-to-br from-[#ffde59]/80 to-[#ff914D]/80 rounded-3xl shadow-xl hover:shadow-2xl transition p-4 flex flex-col border border-yellow-200"
         >
           <img
             src={product.img_prodotto}
@@ -98,10 +126,10 @@ function CategoryProducts({ categoryId, addToCart }) {
             className="w-full h-48 object-cover rounded-2xl mb-3"
           />
           <h3 className="text-lg font-bold text-gray-800">{product.descrizione}</h3>
-          <p className="text-gray-600 mt-1">€ {(Number(product.prezzo) || 0).toFixed(2)}</p>
+          <p className="text-gray-700 mt-1 font-semibold">€ {(Number(product.prezzo) || 0).toFixed(2)}</p>
           <button
             onClick={() => addToCart(product)}
-            className="mt-3 bg-lime-400 hover:bg-lime-500 text-gray-900 font-semibold px-5 py-2 rounded-full shadow hover:shadow-lg active:scale-95 transition"
+            className="mt-3 bg-gradient-to-l from-[#ff914D] to-[#ffde59] text-white font-semibold px-5 py-2 rounded-lg shadow hover:from-[#ffde59] hover:to-[#ff914D] active:scale-95 transition border-2 border-orange-400"
           >
             Aggiungi al carrello
           </button>

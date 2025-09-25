@@ -42,7 +42,7 @@ export default function CheckoutPage() {
 
   if (success) {
     return (
-      <div className="p-6 text-center">
+      <div className="p-6 text-center bg-gradient-to-r from-[#ffde59] to-[#ff914D] h-screen flex flex-col items-center justify-center gap-4">
         <h2 className="text-2xl font-bold text-lime-600">✅ Ordine inviato!</h2>
         <p className="mt-2">Il cameriere riceverà la tua richiesta.</p>
         <button
@@ -56,7 +56,8 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div className="p-6 bg-gradient-to-b from-lime-50 to-lime-600 min-h-screen rounded-xl shadow-md">
+    <div className="p-6 bg-gradient-to-r from-[#ffde59] to-[#ff914D] min-h-screen rounded-xl shadow-md">
+  {/* <div className="absolute inset-0 z-0 bg-[url('/img/sfondo.png')] bg-center bg-no-repeat bg-fixed" /> */}
       <h2 className="text-xl font-bold mb-4">Riepilogo Ordine - Tavolo {tableId}</h2>
 
       {cartItems.length === 0 ? (

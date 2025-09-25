@@ -1,4 +1,4 @@
-/*import { useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 
 export default function ProductListPage() {
@@ -32,4 +32,3 @@ export default function ProductListPage() {
     </div>
   );
 }
-*/
