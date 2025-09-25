@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 
 export default function GestionePage() {
-  // Stati per ordini, categorie, prodotti
+  // Stati principali
   const [ordini, setOrdini] = useState([]);
   const [categorie, setCategorie] = useState([]);
   const [prodotti, setProdotti] = useState([]);
@@ -15,12 +15,13 @@ export default function GestionePage() {
   const [editProdotto, setEditProdotto] = useState(null);
   const [editCategoria, setEditCategoria] = useState(null);
   const [message, setMessage] = useState("");
-  const [activeTab, setActiveTab] = useState("ordini"); // "ordini" o "menu"
-
+  const [activeTab, setActiveTab] = useState("ordini");
   const [showCompletati, setShowCompletati] = useState(false);
   const [showAnnullati, setShowAnnullati] = useState(false);
 
-  // Carica dati all'avvio
+  const API_BASE = "http://localhost:4000";
+
+  // --- FETCH DATI ---
   useEffect(() => {
     fetchOrdini();
     fetchCategorie();
@@ -33,7 +34,7 @@ export default function GestionePage() {
       if (!res.ok) throw new Error(`Errore API ordini: ${res.status}`);
       setOrdini(await res.json());
     } catch (err) {
-      console.error("Errore caricamento ordini:", err);
+      console.error(err);
       setMessage("Errore caricamento ordini");
     }
   };
@@ -49,7 +50,7 @@ export default function GestionePage() {
       if (!res.ok) throw new Error(`Errore API categorie: ${res.status}`);
       setCategorie(await res.json());
     } catch (err) {
-      console.error("Errore caricamento categorie:", err);
+      console.error(err);
       setMessage("Errore caricamento categorie");
     }
   };
@@ -60,12 +61,12 @@ export default function GestionePage() {
       if (!res.ok) throw new Error(`Errore API prodotti: ${res.status}`);
       setProdotti(await res.json());
     } catch (err) {
-      console.error("Errore caricamento prodotti:", err);
+      console.error(err);
       setMessage("Errore caricamento prodotti");
     }
   };
 
-  // ORDINI
+  // --- ORDINI ---
   const aggiornaStatoOrdine = async (id_ordine, stato_ordine) => {
     await fetch(`http://localhost:4000/api/ordini/${id_ordine}`, {
       method: "PATCH",
@@ -75,7 +76,7 @@ export default function GestionePage() {
     fetchOrdini();
   };
 
-  // CATEGORIE
+  // --- CATEGORIE ---
   const aggiungiCategoria = async () => {
     if (!newCategoria.trim()) return;
     await fetch("http://localhost:4000/api/categorie", {
@@ -107,14 +108,9 @@ export default function GestionePage() {
     fetchCategorie();
   };
 
-  // PRODOTTI
+  // --- PRODOTTI ---
   const aggiungiProdotto = async () => {
-    if (
-      !newProdotto.nome ||
-      !newProdotto.prezzo ||
-      !newProdotto.id_categoria
-    )
-      return;
+    if (!newProdotto.nome || !newProdotto.prezzo || !newProdotto.id_categoria) return;
     await fetch("http://localhost:4000/api/prodotti", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -125,19 +121,12 @@ export default function GestionePage() {
         img_prodotto: newProdotto.img_prodotto,
       }),
     });
-    setNewProdotto({
-      nome: "",
-      prezzo: "",
-      id_categoria: "",
-      img_prodotto: "",
-    });
+    setNewProdotto({ nome: "", prezzo: "", id_categoria: "", img_prodotto: "" });
     fetchProdotti();
   };
 
   const eliminaProdotto = async (id_prodotto) => {
-    await fetch(`http://localhost:4000/api/prodotti/${id_prodotto}`, {
-      method: "DELETE",
-    });
+    await fetch(`http://localhost:4000/api/prodotti/${id_prodotto}`, { method: "DELETE" });
     fetchProdotti();
   };
 
@@ -156,72 +145,49 @@ export default function GestionePage() {
     fetchProdotti();
   };
 
-  // Split ordini
-  const ordiniAttivi = ordini.filter(
-    (o) => o.stato_ordine !== "completato" && o.stato_ordine !== "annullato"
-  );
-  const ordiniCompletati = ordini.filter((o) => o.stato_ordine === "completato");
-  const ordiniAnnullati = ordini.filter((o) => o.stato_ordine === "annullato");
+// --- UPLOAD IMMAGINE ---
+const handleUploadImage = async (file, isEdit = false) => {
+  const formData = new FormData();
+  formData.append("file", file);
 
+  try {
+    const res = await fetch(`${API_BASE}/api/upload`, {
+      method: "POST",
+      body: formData,
+    });
+    const data = await res.json();
+    console.log("Upload result:", data);
 
-  // Funzione upload immagine
-  const handleUploadImage = async (file, isEdit = false) => {
-    const formData = new FormData();
-    formData.append("file", file);
+    const fileUrl = `${API_BASE}/uploads/${data.fileName}`;
 
-    try {
-      const res = await fetch("http://localhost:4000/api/upload", {
-        method: "POST",
-        body: formData,
-      });
-      const data = await res.json();
-
-      if (isEdit) {
-        setEditProdotto((prev) => ({ ...prev, img_prodotto: data.fileUrl }));
-      } else {
-        setNewProdotto((prev) => ({ ...prev, img_prodotto: data.fileUrl }));
-      }
-    } catch (err) {
-      console.error("Errore upload:", err);
+    if (isEdit) {
+      setEditProdotto(prev => ({ ...prev, img_prodotto: fileUrl }));
+    } else {
+      setNewProdotto(prev => ({ ...prev, img_prodotto: fileUrl }));
     }
-  };
+  } catch (err) {
+    console.error("Errore upload:", err);
+  }
+};
+
+  // --- FILTRI ORDINI ---
+  const ordiniAttivi = ordini.filter(o => o.stato_ordine !== "completato" && o.stato_ordine !== "annullato");
+  const ordiniCompletati = ordini.filter(o => o.stato_ordine === "completato");
+  const ordiniAnnullati = ordini.filter(o => o.stato_ordine === "annullato");
 
   return (
     <div className="p-6 bg-gradient-to-b from-lime-50 to-lime-600 min-h-screen">
-      <h1 className="text-3xl font-bold mb-6 text-lime-700">
-        Gestione Acqua Serena
-      </h1>
-      {message && (
-        <div className="mb-4 text-green-600 font-semibold">{message}</div>
-      )}
+      <h1 className="text-3xl font-bold mb-6 text-lime-700">Gestione Acqua Serena</h1>
+      {message && <div className="mb-4 text-green-600 font-semibold">{message}</div>}
 
-
-      {/* BOTTONI TAB */}
+      {/* TAB */}
       <div className="mb-6 space-x-0">
-        <button
-          onClick={() => setActiveTab("ordini")}
-          className={`px-6 py-3 rounded ${
-            activeTab === "ordini"
-            ? "bg-black text-white"
-            : "bg-white text-black"
-          }`}
-        >
-          Ordini
-        </button>
-        <button
-          onClick={() => setActiveTab("menu")}
-          className={`px-6 py-3 rounded ${
-            activeTab === "menu"
-              ? "bg-black text-white"
-              : "bg-white text-black"
-          }`}
-        >
-          Menu
-        </button>
+        <button onClick={() => setActiveTab("ordini")} className={`px-6 py-3 rounded ${activeTab === "ordini" ? "bg-black text-white" : "bg-white text-black"}`}>Ordini</button>
+        <button onClick={() => setActiveTab("menu")} className={`px-6 py-3 rounded ${activeTab === "menu" ? "bg-black text-white" : "bg-white text-black"}`}>Menu</button>
       </div>
 
-      {/* SEZIONE ORDINI */}
-      {activeTab === "ordini" && (
+ {/* SEZIONE ORDINI */}
+ {activeTab === "ordini" && (
         <section className="mb-8">
           {/* ORDINI ATTIVI */}
           <div className="overflow-x-auto">
@@ -395,76 +361,31 @@ export default function GestionePage() {
         </section>
       )}
 
-      {/* SEZIONE MENU */}
+      {/* --- MENU --- */}
       {activeTab === "menu" && (
         <>
           {/* CATEGORIE */}
           <section className="mb-8">
             <h2 className="text-xl font-semibold mb-2 text-black">Categorie</h2>
             <div className="flex gap-2 mb-2">
-              <input
-                type="text"
-                className="border rounded px-2 py-1"
-                placeholder="Nuova categoria"
-                value={newCategoria}
-                onChange={(e) => setNewCategoria(e.target.value)}
-              />
-              <button
-                onClick={aggiungiCategoria}
-                className="bg-black text-white px-3 py-1 rounded"
-              >
-                Aggiungi
-              </button>
+              <input type="text" className="border rounded px-2 py-1" placeholder="Nuova categoria" value={newCategoria} onChange={(e) => setNewCategoria(e.target.value)} />
+              <button onClick={aggiungiCategoria} className="bg-black text-white px-3 py-1 rounded">Aggiungi</button>
             </div>
             <ul className="bg-white rounded-xl shadow divide-y">
-              {categorie.map((cat) => (
-                <li
-                  key={cat.id_categoria}
-                  className="flex items-center justify-between p-2"
-                >
-                  {editCategoria &&
-                  editCategoria.id_categoria === cat.id_categoria ? (
+              {categorie.map(cat => (
+                <li key={cat.id_categoria} className="flex items-center justify-between p-2">
+                  {editCategoria && editCategoria.id_categoria === cat.id_categoria ? (
                     <>
-                      <input
-                        type="text"
-                        className="border rounded px-2 py-1"
-                        value={editCategoria.denominazione}
-                        onChange={(e) =>
-                          setEditCategoria({
-                            ...editCategoria,
-                            denominazione: e.target.value,
-                          })
-                        }
-                      />
-                      <button
-                        onClick={salvaModificaCategoria}
-                        className="ml-2 bg-green-600 text-white px-2 py-1 rounded"
-                      >
-                        Salva
-                      </button>
-                      <button
-                        onClick={() => setEditCategoria(null)}
-                        className="ml-2 bg-red-600 text-white px-2 py-1 rounded"
-                      >
-                        Annulla
-                      </button>
+                      <input type="text" className="border rounded px-2 py-1" value={editCategoria.denominazione} onChange={(e) => setEditCategoria({ ...editCategoria, denominazione: e.target.value })} />
+                      <button onClick={salvaModificaCategoria} className="ml-2 bg-green-600 text-white px-2 py-1 rounded">Salva</button>
+                      <button onClick={() => setEditCategoria(null)} className="ml-2 bg-red-600 text-white px-2 py-1 rounded">Annulla</button>
                     </>
                   ) : (
                     <>
                       <span>{cat.denominazione}</span>
                       <div>
-                        <button
-                          onClick={() => setEditCategoria(cat)}
-                          className="ml-2 bg-yellow-500 text-white px-2 py-1 rounded"
-                        >
-                          Modifica
-                        </button>
-                        <button
-                          onClick={() => eliminaCategoria(cat.id_categoria)}
-                          className="ml-2 bg-red-600 text-white px-2 py-1 rounded"
-                        >
-                          Elimina
-                        </button>
+                        <button onClick={() => setEditCategoria(cat)} className="ml-2 bg-yellow-500 text-white px-2 py-1 rounded">Modifica</button>
+                        <button onClick={() => eliminaCategoria(cat.id_categoria)} className="ml-2 bg-red-600 text-white px-2 py-1 rounded">Elimina</button>
                       </div>
                     </>
                   )}
@@ -476,152 +397,45 @@ export default function GestionePage() {
           {/* PRODOTTI */}
           <section>
             <h2 className="text-xl font-semibold mb-2 text-black">Prodotti</h2>
-            <div className="flex gap-2 mb-2 flex-wrap">
-              <input
-                type="text"
-                className="border rounded px-2 py-1"
-                placeholder="nome"
-                value={newProdotto.nome}
-                onChange={(e) =>
-                  setNewProdotto({ ...newProdotto, nome: e.target.value })
-                }
-              />
-              <input
-                type="number"
-                className="border rounded px-2 py-1"
-                placeholder="Prezzo"
-                value={newProdotto.prezzo}
-                onChange={(e) =>
-                  setNewProdotto({ ...newProdotto, prezzo: e.target.value })
-                }
-              />
-              <select
-                className="border rounded px-2 py-1"
-                value={newProdotto.id_categoria}
-                onChange={(e) =>
-                  setNewProdotto({ ...newProdotto, id_categoria: e.target.value })
-                }
-              >
+            <div className="flex gap-2 mb-2 flex-wrap items-end">
+              <input type="text" className="border rounded px-2 py-1" placeholder="nome" value={newProdotto.nome} onChange={(e) => setNewProdotto({ ...newProdotto, nome: e.target.value })} />
+              <input type="number" className="border rounded px-2 py-1" placeholder="Prezzo" value={newProdotto.prezzo} onChange={(e) => setNewProdotto({ ...newProdotto, prezzo: e.target.value })} />
+              <select className="border rounded px-2 py-1" value={newProdotto.id_categoria} onChange={(e) => setNewProdotto({ ...newProdotto, id_categoria: e.target.value })}>
                 <option value="">Categoria</option>
-                {categorie.map((cat) => (
-                  <option key={cat.id_categoria} value={cat.id_categoria}>
-                    {cat.denominazione}
-                  </option>
-                ))}
+                {categorie.map(cat => (<option key={cat.id_categoria} value={cat.id_categoria}>{cat.denominazione}</option>))}
               </select>
-              <input
-                type="text"
-                className="border rounded px-2 py-1"
-                placeholder="URL immagine"
-                value={newProdotto.img_prodotto}
-                onChange={(e) =>
-                  setNewProdotto({
-                    ...newProdotto,
-                    img_prodotto: e.target.value,
-                  })
-                }
-              />
-              <button
-                onClick={aggiungiProdotto}
-                className="bg-black text-white px-3 py-1 rounded"
-              >
-                Aggiungi
-              </button>
+
+              {/* UPLOAD IMMAGINE */}
+             <input type="file" accept="image/*" onChange={(e) => e.target.files[0] && handleUploadImage(e.target.files[0])} />
+              {newProdotto.img_prodotto && <img src={newProdotto.img_prodotto} alt="Anteprima" className="w-20 h-20 object-cover mt-2" />}
+
+              <button onClick={aggiungiProdotto} className="bg-black text-white px-3 py-1 rounded">Aggiungi</button>
             </div>
+
             <ul className="bg-white rounded-xl shadow divide-y">
-              {prodotti.map((prod) => (
-                <li
-                  key={prod.id_prodotto}
-                  className="flex items-center justify-between p-2"
-                >
-                  {editProdotto &&
-                  editProdotto.id_prodotto === prod.id_prodotto ? (
+              {prodotti.map(prod => (
+                <li key={prod.id_prodotto} className="flex items-center justify-between p-2">
+                  {editProdotto && editProdotto.id_prodotto === prod.id_prodotto ? (
                     <>
-                      <input
-                        type="text"
-                        className="border rounded px-2 py-1"
-                        value={editProdotto.nome}
-                        onChange={(e) =>
-                          setEditProdotto({
-                            ...editProdotto,
-                            nome: e.target.value,
-                          })
-                        }
-                      />
-                      <input
-                        type="number"
-                        className="border rounded px-2 py-1 ml-2"
-                        value={editProdotto.prezzo}
-                        onChange={(e) =>
-                          setEditProdotto({
-                            ...editProdotto,
-                            prezzo: e.target.value,
-                          })
-                        }
-                      />
-                      <select
-                        className="border rounded px-2 py-1 ml-2"
-                        value={editProdotto.id_categoria}
-                        onChange={(e) =>
-                          setEditProdotto({
-                            ...editProdotto,
-                            id_categoria: e.target.value,
-                          })
-                        }
-                      >
-                        {categorie.map((cat) => (
-                          <option
-                            key={cat.id_categoria}
-                            value={cat.id_categoria}
-                          >
-                            {cat.denominazione}
-                          </option>
-                        ))}
+                      <input type="text" className="border rounded px-2 py-1" value={editProdotto.nome} onChange={(e) => setEditProdotto({ ...editProdotto, nome: e.target.value })} />
+                      <input type="number" className="border rounded px-2 py-1 ml-2" value={editProdotto.prezzo} onChange={(e) => setEditProdotto({ ...editProdotto, prezzo: e.target.value })} />
+                      <select className="border rounded px-2 py-1 ml-2" value={editProdotto.id_categoria} onChange={(e) => setEditProdotto({ ...editProdotto, id_categoria: e.target.value })}>
+                        {categorie.map(cat => (<option key={cat.id_categoria} value={cat.id_categoria}>{cat.denominazione}</option>))}
                       </select>
-                      <input
-                        type="text"
-                        className="border rounded px-2 py-1 ml-2"
-                        placeholder="URL immagine"
-                        value={editProdotto.img_prodotto || ""}
-                        onChange={(e) =>
-                          setEditProdotto({
-                            ...editProdotto,
-                            img_prodotto: e.target.value,
-                          })
-                        }
-                      />
-                      <button
-                        onClick={salvaModificaProdotto}
-                        className="ml-2 bg-green-600 text-white px-2 py-1 rounded"
-                      >
-                        Salva
-                      </button>
-                      <button
-                        onClick={() => setEditProdotto(null)}
-                        className="ml-2 bg-red-600 text-white px-2 py-1 rounded"
-                        >
-                        Annulla
-                      </button>
+
+                      <input type="file" accept="image/*" onChange={(e) => e.target.files[0] && handleUploadImage(e.target.files[0], true)} />
+                      {editProdotto.img_prodotto && <img src={editProdotto.img_prodotto} alt="Anteprima" className="w-20 h-20 object-cover mt-2" />}
+
+                      <button onClick={salvaModificaProdotto} className="ml-2 bg-green-600 text-white px-2 py-1 rounded">Salva</button>
+                      <button onClick={() => setEditProdotto(null)} className="ml-2 bg-red-600 text-white px-2 py-1 rounded">Annulla</button>
                     </>
                   ) : (
                     <>
-                      <span>
-                        {prod.nome} - €{prod.prezzo.toFixed(2)} (
-                        {prod.categoria?.denominazione || "?"})
-                      </span>
+                      <span>{prod.nome} - €{prod.prezzo.toFixed(2)} ({prod.categoria?.denominazione || "?"})</span>
+                      {prod.img_prodotto && <img src={prod.img_prodotto} alt={prod.nome} className="w-20 h-20 object-cover inline-block ml-4" />}
                       <div>
-                        <button
-                          onClick={() => setEditProdotto(prod)}
-                          className="ml-2 bg-yellow-500 text-white px-2 py-1 rounded"
-                        >
-                          Modifica
-                        </button>
-                        <button
-                          onClick={() => eliminaProdotto(prod.id_prodotto)}
-                          className="ml-2 bg-red-600 text-white px-2 py-1 rounded"
-                        >
-                          Elimina
-                        </button>
+                        <button onClick={() => setEditProdotto(prod)} className="ml-2 bg-yellow-500 text-white px-2 py-1 rounded">Modifica</button>
+                        <button onClick={() => eliminaProdotto(prod.id_prodotto)} className="ml-2 bg-red-600 text-white px-2 py-1 rounded">Elimina</button>
                       </div>
                     </>
                   )}

@@ -123,7 +123,7 @@ function CategoryProducts({ categoryId, addToCart }) {
           <img
             src={product.img_prodotto}
             alt={product.nome}
-            className="w-full h-48 object-cover rounded-2xl mb-3"
+            className="w-full h-48 object-contain rounded-2xl mb-3"
           />
 <<<<<<< HEAD
           <h3 className="text-lg font-bold text-gray-800">{product.descrizione}</h3>
