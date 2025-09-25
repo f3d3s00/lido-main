@@ -4,7 +4,7 @@ import { CartProvider, useCart } from "./context/CartContext";
 import { TableProvider } from "./context/TableContext";
 
 
-import Home from "./pages/Home";
+import Home from "./pages/Home"
 import MenuPage from "./pages/MenuPage";
 import CategoryPage from "./pages/CategoryPage";
 
@@ -50,7 +50,11 @@ function App() {
         <Router>
           <AuthProvider>
             <Routes>
+<<<<<<< HEAD
               <Route path="/" element={<Home />} />
+=======
+            <Route path="/" element={<Home />} />
+>>>>>>> cca1323371e5237b837254ef3f3360d5efd19b84
               <Route path="/menu" element={<MenuPage />} />
               <Route path="/category/:id" element={<CategoryPage />} />
               <Route path="/checkout" element={<CheckoutPage />} />
@@ -75,4 +79,3 @@ function App() {
 }
 
 export default App;
-

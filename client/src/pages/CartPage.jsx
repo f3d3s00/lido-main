@@ -17,7 +17,7 @@ export default function CartPage() {
                 className="flex justify-between items-center p-2 bg-white rounded shadow"
               >
                 <span>
-                  {item.descrizione} x {item.quantity} - € {(item.prezzo * item.quantity).toFixed(2)}
+                  {item.nome} x {item.quantity} - € {(item.prezzo * item.quantity).toFixed(2)}
                 </span>
                 <button
                   onClick={() => removeFromCart(item.id_prodotto)} // MODIFICATO: usa id_prodotto

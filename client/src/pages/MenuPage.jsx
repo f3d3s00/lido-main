@@ -122,11 +122,16 @@ function CategoryProducts({ categoryId, addToCart }) {
         >
           <img
             src={product.img_prodotto}
-            alt={product.descrizione}
+            alt={product.nome}
             className="w-full h-48 object-cover rounded-2xl mb-3"
           />
+<<<<<<< HEAD
           <h3 className="text-lg font-bold text-gray-800">{product.descrizione}</h3>
           <p className="text-gray-700 mt-1 font-semibold">€ {(Number(product.prezzo) || 0).toFixed(2)}</p>
+=======
+          <h3 className="text-lg font-bold text-gray-800">{product.nome}</h3>
+          <p className="text-gray-600 mt-1">€ {(Number(product.prezzo) || 0).toFixed(2)}</p>
+>>>>>>> cca1323371e5237b837254ef3f3360d5efd19b84
           <button
             onClick={() => addToCart(product)}
             className="mt-3 bg-gradient-to-l from-[#ff914D] to-[#ffde59] text-white font-semibold px-5 py-2 rounded-lg shadow hover:from-[#ffde59] hover:to-[#ff914D] active:scale-95 transition border-2 border-orange-400"

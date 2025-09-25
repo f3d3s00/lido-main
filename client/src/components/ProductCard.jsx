@@ -14,8 +14,8 @@ export default function ProductCard({ product }) {
       <div className="p-4 flex flex-col flex-1 justify-between">
         <div>
           <h3 className="text-lg font-semibold text-gray-800">{product.name}</h3>
-          {product.descrizione && (
-            <p className="text-gray-500 mt-1 text-sm">{product.descrizione}</p>
+          {product.nome && (
+            <p className="text-gray-500 mt-1 text-sm">{product.nome}</p>
           )}
           <p className="text-gray-700 mt-2 font-medium">{product.prezzo} €</p>
         </div>

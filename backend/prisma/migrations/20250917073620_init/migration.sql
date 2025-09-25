@@ -77,7 +77,7 @@ CREATE TABLE `ordiniprodotti` (
 -- CreateTable
 CREATE TABLE `prodotto` (
     `id_prodotto` INTEGER NOT NULL AUTO_INCREMENT,
-    `descrizione` VARCHAR(191) NOT NULL,
+    `nome` VARCHAR(191) NOT NULL,
     `prezzo` DOUBLE NOT NULL,
     `disponibilita` BOOLEAN NOT NULL DEFAULT true,
     `img_prodotto` VARCHAR(191) NULL,

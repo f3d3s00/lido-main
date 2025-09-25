@@ -51,7 +51,7 @@ model ordiniprodotti {
 
 model prodotto {
   id_prodotto    Int              @id @default(autoincrement())
-  descrizione    String
+  nome           String
   prezzo         Float
   disponibilita  Boolean          @default(true)
   img_prodotto   String?
