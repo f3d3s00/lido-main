@@ -28,9 +28,9 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Serve la cartella uploads (corretto)
-app.use("/uploads", express.static(path.join(__dirname, "uploads"))); 
+app.use("/uploads", express.static(path.join(__dirname, "../uploads"))); 
 
-
+app.use(express.json())
 // Rotta di test
 app.get("/", (req, res) => {
   res.send("Backend attivo e funzionante");

@@ -395,54 +395,136 @@ const handleUploadImage = async (file, isEdit = false) => {
           </section>
 
           {/* PRODOTTI */}
-          <section>
-            <h2 className="text-xl font-semibold mb-2 text-black">Prodotti</h2>
-            <div className="flex gap-2 mb-2 flex-wrap items-end">
-              <input type="text" className="border rounded px-2 py-1" placeholder="nome" value={newProdotto.nome} onChange={(e) => setNewProdotto({ ...newProdotto, nome: e.target.value })} />
-              <input type="number" className="border rounded px-2 py-1" placeholder="Prezzo" value={newProdotto.prezzo} onChange={(e) => setNewProdotto({ ...newProdotto, prezzo: e.target.value })} />
-              <select className="border rounded px-2 py-1" value={newProdotto.id_categoria} onChange={(e) => setNewProdotto({ ...newProdotto, id_categoria: e.target.value })}>
-                <option value="">Categoria</option>
-                {categorie.map(cat => (<option key={cat.id_categoria} value={cat.id_categoria}>{cat.denominazione}</option>))}
-              </select>
+<section className="p-4">
+  <h2 className="text-xl font-semibold mb-4 text-black">Prodotti</h2>
 
-              {/* UPLOAD IMMAGINE */}
-             <input type="file" accept="image/*" onChange={(e) => e.target.files[0] && handleUploadImage(e.target.files[0])} />
-              {newProdotto.img_prodotto && <img src={newProdotto.img_prodotto} alt="Anteprima" className="w-20 h-20 object-cover mt-2" />}
+  <div className="flex flex-col sm:flex-row sm:items-end gap-2 mb-4 flex-wrap">
+    <input
+      type="text"
+      className="border rounded px-2 py-1 w-full sm:w-auto flex-1"
+      placeholder="Nome"
+      value={newProdotto.nome}
+      onChange={(e) => setNewProdotto({ ...newProdotto, nome: e.target.value })}
+    />
+    <input
+      type="number"
+      className="border rounded px-2 py-1 w-full sm:w-32"
+      placeholder="Prezzo"
+      value={newProdotto.prezzo}
+      onChange={(e) => setNewProdotto({ ...newProdotto, prezzo: e.target.value })}
+    />
+    <select
+      className="border rounded px-2 py-1 w-full sm:w-40"
+      value={newProdotto.id_categoria}
+      onChange={(e) => setNewProdotto({ ...newProdotto, id_categoria: e.target.value })}
+    >
+      <option value="">Categoria</option>
+      {categorie.map(cat => (
+        <option key={cat.id_categoria} value={cat.id_categoria}>{cat.denominazione}</option>
+      ))}
+    </select>
 
-              <button onClick={aggiungiProdotto} className="bg-black text-white px-3 py-1 rounded">Aggiungi</button>
-            </div>
+    {/* Upload immagine */}
+    <input
+      type="file"
+      accept="image/*"
+      className="w-full sm:w-auto"
+      onChange={(e) => e.target.files[0] && handleUploadImage(e.target.files[0])}
+    />
+    {newProdotto.img_prodotto && (
+      <img
+        src={newProdotto.img_prodotto}
+        alt="Anteprima"
+        className="w-20 h-20 object-cover mt-2 sm:mt-0"
+      />
+    )}
 
-            <ul className="bg-white rounded-xl shadow divide-y">
-              {prodotti.map(prod => (
-                <li key={prod.id_prodotto} className="flex items-center justify-between p-2">
-                  {editProdotto && editProdotto.id_prodotto === prod.id_prodotto ? (
-                    <>
-                      <input type="text" className="border rounded px-2 py-1" value={editProdotto.nome} onChange={(e) => setEditProdotto({ ...editProdotto, nome: e.target.value })} />
-                      <input type="number" className="border rounded px-2 py-1 ml-2" value={editProdotto.prezzo} onChange={(e) => setEditProdotto({ ...editProdotto, prezzo: e.target.value })} />
-                      <select className="border rounded px-2 py-1 ml-2" value={editProdotto.id_categoria} onChange={(e) => setEditProdotto({ ...editProdotto, id_categoria: e.target.value })}>
-                        {categorie.map(cat => (<option key={cat.id_categoria} value={cat.id_categoria}>{cat.denominazione}</option>))}
-                      </select>
+    <button
+      onClick={aggiungiProdotto}
+      className="bg-black text-white px-3 py-1 rounded w-full sm:w-auto"
+    >
+      Aggiungi
+    </button>
+  </div>
 
-                      <input type="file" accept="image/*" onChange={(e) => e.target.files[0] && handleUploadImage(e.target.files[0], true)} />
-                      {editProdotto.img_prodotto && <img src={editProdotto.img_prodotto} alt="Anteprima" className="w-20 h-20 object-cover mt-2" />}
-
-                      <button onClick={salvaModificaProdotto} className="ml-2 bg-green-600 text-white px-2 py-1 rounded">Salva</button>
-                      <button onClick={() => setEditProdotto(null)} className="ml-2 bg-red-600 text-white px-2 py-1 rounded">Annulla</button>
-                    </>
-                  ) : (
-                    <>
-                      <span>{prod.nome} - €{prod.prezzo.toFixed(2)} ({prod.categoria?.denominazione || "?"})</span>
-                      {prod.img_prodotto && <img src={prod.img_prodotto} alt={prod.nome} className="w-20 h-20 object-cover inline-block ml-4" />}
-                      <div>
-                        <button onClick={() => setEditProdotto(prod)} className="ml-2 bg-yellow-500 text-white px-2 py-1 rounded">Modifica</button>
-                        <button onClick={() => eliminaProdotto(prod.id_prodotto)} className="ml-2 bg-red-600 text-white px-2 py-1 rounded">Elimina</button>
-                      </div>
-                    </>
-                  )}
-                </li>
+  <ul className="bg-white rounded-xl shadow divide-y">
+  {prodotti.map(prod => (
+    <li key={prod.id_prodotto} className="flex flex-col gap-2 p-2">
+      {editProdotto && editProdotto.id_prodotto === prod.id_prodotto ? (
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 w-full flex-wrap">
+          {/* INPUTS */}
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2 flex-1 flex-wrap">
+            <input
+              type="text"
+              className="border rounded px-2 py-1 flex-1"
+              value={editProdotto.nome}
+              onChange={(e) => setEditProdotto({ ...editProdotto, nome: e.target.value })}
+            />
+            <input
+              type="number"
+              className="border rounded px-2 py-1 sm:w-32"
+              value={editProdotto.prezzo}
+              onChange={(e) => setEditProdotto({ ...editProdotto, prezzo: e.target.value })}
+            />
+            <select
+              className="border rounded px-2 py-1 sm:w-40"
+              value={editProdotto.id_categoria}
+              onChange={(e) => setEditProdotto({ ...editProdotto, id_categoria: e.target.value })}
+            >
+              {categorie.map(cat => (
+                <option key={cat.id_categoria} value={cat.id_categoria}>{cat.denominazione}</option>
               ))}
-            </ul>
-          </section>
+            </select>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => e.target.files[0] && handleUploadImage(e.target.files[0], true)}
+            />
+            {editProdotto.img_prodotto && (
+              <img
+                src={editProdotto.img_prodotto}
+                alt="Anteprima"
+                className="w-20 h-20 object-cover mt-2 sm:mt-0"
+              />
+            )}
+          </div>
+
+          {/* BOTTONI */}
+          <div className="flex gap-2 flex-wrap mt-2 sm:mt-0">
+            <button
+              onClick={salvaModificaProdotto}
+              className="bg-green-600 text-white px-4 py-2 rounded"
+            >
+              Salva
+            </button>
+            <button
+              onClick={() => setEditProdotto(null)}
+              className="bg-red-600 text-white px-4 py-2 rounded"
+            >
+              Annulla
+            </button>
+          </div>
+        </div>
+      ) : (
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 w-full flex-wrap">
+          <div className="flex items-center gap-2 flex-wrap">
+            <span>{prod.nome} - €{prod.prezzo.toFixed(2)} ({prod.categoria?.denominazione || "?"})</span>
+            {prod.img_prodotto && <img src={prod.img_prodotto} alt={prod.nome} className="w-20 h-20 object-cover" />}
+          </div>
+          <div className="flex gap-2 flex-wrap mt-2 sm:mt-0">
+            <button onClick={() => setEditProdotto(prod)} className="bg-yellow-500 text-white px-2 py-1 rounded">
+              Modifica
+            </button>
+            <button onClick={() => eliminaProdotto(prod.id_prodotto)} className="bg-red-600 text-white px-2 py-1 rounded">
+              Elimina
+            </button>
+          </div>
+        </div>
+      )}
+    </li>
+  ))}
+</ul>
+</section>
         </>
       )}
     </div>

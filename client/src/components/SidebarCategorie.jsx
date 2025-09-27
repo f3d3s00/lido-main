@@ -26,7 +26,7 @@ export default function SidebarCategorie({ isOpen, onClose }) {
       }`}
     >
       <div className="flex justify-between items-center p-4 border-b border-yellow-200 bg-white/60">
-        <h2 className="text-xl font-bold text-yellow-700">Categorie</h2>
+        <h2 className="text-2xl font-bold text-yellow-700">Home</h2>
         <button onClick={onClose} className="text-yellow-600 hover:text-yellow-800 text-2xl">&times;</button>
       </div>
       <div className="p-4 flex flex-col gap-2">
@@ -37,7 +37,7 @@ export default function SidebarCategorie({ isOpen, onClose }) {
             <button
               key={cat.id_categoria}
               onClick={() => handleCategoriaClick(cat.id_categoria)}
-              className="w-full text-left px-4 py-2 rounded-2xl font-semibold hover:bg-lime-200/60 transition text-yellow-900 bg-white/60 shadow"
+              className="w-full text-left font-menu px-4 py-2 text-xl font-semibold hover:bg-lime-200/60 transition text-[#ff9100] shadow"
             >
               {cat.denominazione}
             </button>

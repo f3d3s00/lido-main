@@ -6,16 +6,27 @@ export default function SidebarCategorieButton() {
   const { tableId } = useTable();
   const [open, setOpen] = useState(false);
 
-  if (!tableId) return null; // Mostra il pulsante solo se l'utente ha inserito il numero ombrellone
+  if (!tableId) return null; // Mostra il pulsante solo se è stato inserito il numero ombrellone
 
   return (
     <>
+      {/* Pulsante apri menu */}
       <button
         onClick={() => setOpen(true)}
-        className="fixed top-5 left-5 bg-gradient-to-l from-[#ff914D] to-[#ffde59] text-white rounded-full w-20 h-12 flex items-center justify-center text-lg font-bold shadow-lg hover:from-[#ffde59] hover:to-[#ff914D] transition z-50 border-2 border-orange-400"
+        className="fixed top-3 left-4 text-[#cba24d] w-13 h-12 flex items-center justify-center text-5xl font-bold z-50"
       >
-        MENU
+        ☰
       </button>
+
+      {/* Overlay trasparente */}
+      {open && (
+        <div
+          onClick={() => setOpen(false)}
+          className="fixed inset-0 z-40"
+        ></div>
+      )}
+
+      {/* Sidebar categorie */}
       <SidebarCategorie isOpen={open} onClose={() => setOpen(false)} />
     </>
   );
