@@ -12,4 +12,4 @@ export const TableProvider = ({ children }) => {
 };
 
 export const useTable = () => useContext(TableContext);
-export { TableContext };  // <-- named export corretto
+export { TableContext };  

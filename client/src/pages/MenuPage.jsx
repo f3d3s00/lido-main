@@ -38,7 +38,7 @@ export default function MenuPage() {
     // eslint-disable-next-line
   }, []);
 
-  // Ogni volta che cambia la query string, seleziona la categoria giusta
+  // Aggiorna la categoria selezionata quando cambia la query string
   useEffect(() => {
     if (!categories.length) return;
     const catId = searchParams.get("categoria");
@@ -58,7 +58,6 @@ export default function MenuPage() {
       {/* SFONDO */}
       <div className="absolute inset-0 z-10 bg-[url('/img/sfondo.png')] bg-center bg-no-repeat bg-fixed bg-contain opacity-40" />
       <div className="absolute inset-0 z-0 bg-gradient-to-r from-[#ffde59] to-[#ff914D]" />
-
 
       {/* HEADER */}
       <header className="relative z-30 w-full flex justify-center ">
@@ -98,9 +97,7 @@ export default function MenuPage() {
               addToCart={addToCart}
             />
           ) : (
-            <p className="text-[#ff3131] text-center">
-               
-            </p>
+            <p className="text-[#ff3131] text-center"></p>
           )}
         </div>
       </main>
@@ -160,12 +157,17 @@ function CategoryProducts({ categoryId, addToCart }) {
             className="w-full h-48 object-contain rounded-2xl mb-3"
           />
           <h3 className="text-xl font-bold text-black">{product.nome}</h3>
+          {/* Descrizione */}
+          {product.descrizione && (
+            <p className="text-gray-700 italic mb-2">{product.descrizione}</p>
+          )}
           <p className="text-red-700 mt-1 font-semibold text-xl">
             € {(Number(product.prezzo) || 0).toFixed(2)}
           </p>
           <button
             onClick={() => addToCart(product)}
-            className="w-full mt-3 bg-[#e8af20] text-black text-l py-3 rounded-xl shadow-md hover:from-[#ffde59] hover:to-[#ff914D] transition font-bold "          >
+            className="w-full mt-3 bg-[#e8af20] text-black text-l py-3 rounded-xl shadow-md hover:from-[#ffde59] hover:to-[#ff914D] transition font-bold"
+          >
             Aggiungi al carrello
           </button>
         </div>

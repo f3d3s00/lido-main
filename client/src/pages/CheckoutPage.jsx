@@ -74,7 +74,7 @@ export default function CheckoutPage() {
       <img src="/src/img/granchio.png" className="bg-granchio" />
       
       <h2 className="text-4xl z-50 mb-30 font-bold text-[#ff3131]">✅ Ordine inviato!</h2>
-      <p className="mb-25 z-50 text-2xl">Il tuo ordine arriverà a breve</p>
+      <p className="mb-25 z-50 text-2xl"> <strong>Il tuo ordine arriverà a breve </strong></p>
     
       <button
         onClick={() => navigate("/menu")}
@@ -96,7 +96,7 @@ export default function CheckoutPage() {
 
   return (
     <div className="p-6 bg-gradient-to-r from-[#ffde59] to-[#ff914D] min-h-screen rounded-xl shadow-md">
-      <h2 className="text-3xl text-[#ff3131] font-bold mb-5 mt-15 border-b border-[#ff3131]">
+      <h2 className="text-3xl text-[#ff3131] font-bold mb-5 border-b border-[#ff3131]">
         Il tuo ordine include - Ombrellone n° {tableId}
       </h2>
 
@@ -175,19 +175,20 @@ export default function CheckoutPage() {
           {error && <p className="text-red-500 mt-2">{error}</p>}
 
           <button
+            onClick={() => navigate("/menu")}
+            className="bg-yellow-600 hover:bg-gradient-to-l hover:from-[#ff914D] hover:to-[#ffde59] text-white px-10 py-5 rounded-lg shadow transition ml-2 mr-5"
+          >
+            Indietro
+          </button>
+
+          <button
             onClick={handleOrder}
             disabled={loading}
-            className="bg-yellow-600 hover:bg-gradient-to-l hover:from-[#ff914D] hover:to-[#ffde59] text-white px-7 py-5 rounded-lg shadow transition mt-3 mr-3"
+            className="bg-yellow-600 hover:bg-gradient-to-l hover:from-[#ff914D] hover:to-[#ffde59] text-white px-7 py-5 rounded-lg shadow transition mt-5 mr-3"
           >
             {loading ? "Invio ordine..." : "Conferma Ordine"}
           </button>
 
-          <button
-            onClick={() => navigate("/menu")}
-            className="bg-yellow-600 hover:bg-gradient-to-l hover:from-[#ff914D] hover:to-[#ffde59] text-white px-10 py-5 rounded-lg shadow transition ml-2"
-          >
-            Indietro
-          </button>
         </>
       )}
     </div>

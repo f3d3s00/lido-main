@@ -1,12 +1,17 @@
 import { useTable } from "../context/TableContext";
 import SidebarCategorie from "./SidebarCategorie";
 import { useState } from "react";
+import { useLocation } from "react-router-dom"; // React Router
 
 export default function SidebarCategorieButton() {
   const { tableId } = useTable();
   const [open, setOpen] = useState(false);
+  const location = useLocation(); // ottieni il percorso corrente
 
-  if (!tableId) return null; // Mostra il pulsante solo se è stato inserito il numero ombrellone
+  // Lista delle pagine in cui vuoi mostrare il pulsante
+  const allowedPages = ["/PaginaIniziale","/menu", "/category"]; // esempio
+
+  if (!tableId || !allowedPages.includes(location.pathname)) return null;
 
   return (
     <>
