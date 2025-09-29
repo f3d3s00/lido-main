@@ -112,6 +112,7 @@ export default function CheckoutPage() {
                 <img src={item.img_prodotto} alt={item.nome} className="w-16 h-16 object-cover rounded " />
                 <div className="flex-1 ">
                   <h3 className="font-semibold">{item.nome}</h3>
+                  <p className="font-semibold">x {item.quantity}</p>
                 </div>
                 <span className="font-semibold ">{(item.prezzo * item.quantity).toFixed(2)} €</span>
               {/* Linea colorata, tranne dopo l’ultimo elemento */}
