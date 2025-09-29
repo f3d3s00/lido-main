@@ -184,7 +184,7 @@ export default function CheckoutPage() {
           <button
             onClick={handleOrder}
             disabled={loading}
-            className="bg-yellow-600 hover:bg-gradient-to-l hover:from-[#ff914D] hover:to-[#ffde59] text-white px-7 py-5 rounded-lg shadow transition mt-5 mr-3"
+            className="bg-yellow-600 hover:bg-gradient-to-l hover:from-[#ff914D] hover:to-[#ffde59] text-white px-5 py-5 rounded-lg shadow transition mt-5 mr-3"
           >
             {loading ? "Invio ordine..." : "Conferma Ordine"}
           </button>
