@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useCart } from "../context/CartContext";
+import Header from "../components/Header";
 
 export default function MenuPage() {
   const [categories, setCategories] = useState([]);
@@ -59,12 +60,13 @@ export default function MenuPage() {
       <div className="absolute inset-0 z-10 bg-[url('/img/sfondo.png')] bg-center bg-no-repeat bg-fixed bg-contain opacity-40" />
       <div className="absolute inset-0 z-0 bg-gradient-to-r from-[#ffde59] to-[#ff914D]" />
 
+      <Header />
       {/* HEADER */}
-      <header className="relative z-30 w-full flex justify-center ">
+      {/* <header className="relative z-30 w-full flex justify-center ">
         <h1 className="w-full text-6xl text-center font-title text-[#ff3131] bg-gradient-to-r from-[#ffda6a] to-[#fff7de] p-5 shadow pl-17 pb-0 ">
           <i>Acqua Serena</i>
         </h1>
-      </header>
+      </header> */}
 
       {/* CONTENUTO CENTRALE */}
       <main className="relative z-20 flex-1 flex flex-col items-center justify-start p-6">
@@ -103,9 +105,10 @@ export default function MenuPage() {
       </main>
 
       {/* FOOTER */}
-      <footer className="relative z-30 w-full text-3xl text-center bg-gradient-to-r from-[#ffda6a] to-[#fff7de]  p-5 shadow">
-        <p className="text-[#ff3131] text-lg">
-          © 2025 Lido Acqua Serena - Tutti i diritti riservati
+      <footer className="relative z-30 w-full bg-gradient-to-r from-[#ffda6a] to-[#fff7de] p-5 shadow flex flex-col items-center justify-center text-center">
+        <p className="text-[#ff3131] text-lg sm:text-2xl md:text-3xl break-words whitespace-pre-line leading-tight">
+          © 2025 Lido Acqua Serena<br className="block sm:hidden" />
+          Tutti i diritti riservati
         </p>
       </footer>
     </div>
@@ -149,7 +152,7 @@ function CategoryProducts({ categoryId, addToCart }) {
       {products.map((product) => (
         <div
           key={product.id_prodotto}
-          className=" rounded-3xl shadow-xl hover:shadow-2xl transition p-4 flex flex-col bg-white border border-yellow-200"
+          className=" rounded-3xl shadow-xl hover:shadow-2xl transition p-4 flex flex-col bg-white border border-amber-400"
         >
           <img
             src={product.img_prodotto}

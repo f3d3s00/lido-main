@@ -8,32 +8,28 @@ datasource db {
 }
 
 model categoria {
-  id_categoria   Int        @id @default(autoincrement())
-  denominazione  String
-  prodotto       prodotto[]
+  id_categoria  Int        @id @default(autoincrement())
+  denominazione String
+  prodotto      prodotto[]
 }
 
 model ombrellone {
-  id_ombrellone     Int      @id @default(autoincrement())
-  fila              String
+  id_ombrellone     Int                         @id @default(autoincrement())
   numero_ombrellone Int
-  stato_ombrellone  String
+  stato_ombrellone  ombrellone_stato_ombrellone @default(libero)
   ordine            ordine[]
 }
-
-
 
 model ordine {
   id_ordine      Int              @id @default(autoincrement())
   id_ombrellone  Int
   data_ordine    DateTime         @default(now())
   stato_ordine   String
-  ombrellone     ombrellone       @relation(fields: [id_ombrellone], references: [id_ombrellone], map: "Ordine_id_ombrellone_fkey")
+  ombrellone     ombrellone       @relation(fields: [id_ombrellone], references: [id_ombrellone], onDelete: NoAction, map: "Ordine_id_ombrellone_fkey")
   ordiniprodotti ordiniprodotti[]
 
   @@index([id_ombrellone], map: "Ordine_id_ombrellone_fkey")
 }
-
 
 model ordiniprodotti {
   id_ordine_prodotto Int      @id @default(autoincrement())
@@ -41,13 +37,12 @@ model ordiniprodotti {
   id_prodotto        Int
   quantita           Int
   prezzo             Float
-  ordine             ordine   @relation(fields: [id_ordine], references: [id_ordine], map: "OrdiniProdotti_id_ordine_fkey")
-  prodotto           prodotto @relation(fields: [id_prodotto], references: [id_prodotto], map: "OrdiniProdotti_id_prodotto_fkey")
+  ordine             ordine   @relation(fields: [id_ordine], references: [id_ordine], onDelete: NoAction, map: "OrdiniProdotti_id_ordine_fkey")
+  prodotto           prodotto @relation(fields: [id_prodotto], references: [id_prodotto], onDelete: NoAction, map: "OrdiniProdotti_id_prodotto_fkey")
 
   @@index([id_ordine], map: "OrdiniProdotti_id_ordine_fkey")
   @@index([id_prodotto], map: "OrdiniProdotti_id_prodotto_fkey")
 }
-
 
 model prodotto {
   id_prodotto    Int              @id @default(autoincrement())
@@ -56,7 +51,14 @@ model prodotto {
   disponibilita  Boolean          @default(true)
   img_prodotto   String?
   id_categoria   Int
-  categoria      categoria        @relation(fields: [id_categoria], references: [id_categoria])
+  descrizione    String?          @db.VarChar(255)
   ordiniprodotti ordiniprodotti[]
-  descrizione     String  @default("") // nuova colonna opzionale
+  categoria      categoria        @relation(fields: [id_categoria], references: [id_categoria], onDelete: NoAction)
+
+  @@index([id_categoria], map: "prodotto_id_categoria_fkey")
+}
+
+enum ombrellone_stato_ombrellone {
+  libero
+  occupato
 }

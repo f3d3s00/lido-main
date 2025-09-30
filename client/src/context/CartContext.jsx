@@ -4,10 +4,24 @@ import { createContext, useState, useContext } from "react";
 
 const CartContext = createContext();
 
+import { useEffect } from "react";
+
 export function CartProvider({ children }) {
-  const [cartItems, setCartItems] = useState([]);
+  // Carica il carrello da localStorage all'avvio
+  const [cartItems, setCartItems] = useState(() => {
+    try {
+      const saved = localStorage.getItem("cartItems");
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
+  // Salva il carrello su localStorage ogni volta che cambia
+  useEffect(() => {
+    localStorage.setItem("cartItems", JSON.stringify(cartItems));
+  }, [cartItems]);
 
   const addToCart = (item) => {
     setCartItems((prev) => {
@@ -52,11 +66,10 @@ export function CartProvider({ children }) {
   const toggleSidebar = () => setIsSidebarOpen((prev) => !prev);
 
   const totalPrice = cartItems.reduce(
-    (acc, item) => acc + item.prezzo * item.quantity, // usa "prezzo" dal JSON
+    (acc, item) => acc + item.prezzo * item.quantity,
     0
   );
 
-  // Calcola il totale dei prodotti nel carrello
   const totalQuantity = cartItems.reduce((acc, item) => acc + item.quantity, 0);
 
   return (

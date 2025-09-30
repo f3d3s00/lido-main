@@ -33,9 +33,9 @@ function CartIconButton() {
     <button
       onClick={toggleSidebar}
       className="fixed z-30 bottom-5 right-5 bg-gradient-to-l from-[#ff914D] to-[#ffde59] text-white rounded-full w-16 h-16 flex items-center justify-center text-2xl shadow-lg hover:from-[#ffde59] hover:to-[#ff914D] transition border-2 border-orange-400"
-      style={{ position: 'fixed', bottom: 20, right: 20 }}
+      style={{ position: 'fixed', bottom: 10, right: 10 }}
     >
-      <span role="img" aria-label="carrello">🛒</span>
+      <span role="img" aria-label="carrello" >🛒</span>
       {totalQuantity > 0 && (
         <span
           className="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center border-2 border-white"
