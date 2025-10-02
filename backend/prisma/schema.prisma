@@ -27,8 +27,15 @@ model ordine {
   stato_ordine   String
   ombrellone     ombrellone       @relation(fields: [id_ombrellone], references: [id_ombrellone], onDelete: NoAction, map: "Ordine_id_ombrellone_fkey")
   ordiniprodotti ordiniprodotti[]
+  metodoPagamento  PaymentMethod
 
   @@index([id_ombrellone], map: "Ordine_id_ombrellone_fkey")
+}
+
+enum PaymentMethod {
+  CONTANTI
+  CARTA
+  CASSA
 }
 
 model ordiniprodotti {

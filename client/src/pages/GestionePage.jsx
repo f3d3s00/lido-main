@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 
+
 export default function GestionePage() {
   // Stati principali
   const [ordini, setOrdini] = useState([]);
@@ -19,6 +20,12 @@ export default function GestionePage() {
   const [activeTab, setActiveTab] = useState("ordini");
   const [showCompletati, setShowCompletati] = useState(false);
   const [showAnnullati, setShowAnnullati] = useState(false);
+
+// Richieste cameriere
+const [richieste, setRichieste] = useState([]);
+const [error, setError] = useState(null);
+const [loading, setLoading] = useState(true);
+
 
   const API_BASE = "http://localhost:4000";
 
@@ -170,6 +177,39 @@ export default function GestionePage() {
   const ordiniCompletati = ordini.filter(o => o.stato_ordine === "completato");
   const ordiniAnnullati = ordini.filter(o => o.stato_ordine === "annullato");
 
+// --- FETCH RICHIESTE CAMERIERE ---
+const fetchRichiesteCameriere = async () => {
+  try {
+    const res = await fetch(`${API_BASE}/api/richiesteCameriere`);
+    if (!res.ok) throw new Error("Errore caricamento richieste cameriere");
+    const data = await res.json();
+    setRichieste(data);
+  } catch (err) {
+    console.error(err);
+    setError(err.message);
+  } finally {
+    setLoading(false);
+  }
+};
+
+useEffect(() => {
+  fetchRichiesteCameriere();
+  const interval = setInterval(fetchRichiesteCameriere, 10000); 
+  return () => clearInterval(interval);
+}, []);
+
+// --- FUNZIONE ELIMINA RICHIESTA ---
+const evadiRichiesta = async (id) => {
+  try {
+    await fetch(`${API_BASE}/api/richiesteCameriere/${id}`, { method: "DELETE" });
+    fetchRichiesteCameriere();
+  } catch (err) {
+    console.error(err);
+  }
+};
+if (loading) return <p>Caricamento...</p>;
+if (error) return <p className="text-red-500">{error}</p>;
+
   return (
     <div className="p-6 bg-gradient-to-b from-lime-50 to-lime-600 min-h-screen">
       <h1 className="text-3xl font-bold mb-6 text-lime-700">Gestione Acqua Serena</h1>
@@ -177,11 +217,13 @@ export default function GestionePage() {
 
       {/* TAB */}
       <div className="mb-6 space-x-0">
-        <button onClick={() => setActiveTab("ordini")} className={`px-6 py-3 rounded ${activeTab === "ordini" ? "bg-black text-white" : "bg-white text-black"}`}>Ordini</button>
-        <button onClick={() => setActiveTab("menu")} className={`px-6 py-3 rounded ${activeTab === "menu" ? "bg-black text-white" : "bg-white text-black"}`}>Menu</button>
-      </div>
- {/* SEZIONE ORDINI */}
- {activeTab === "ordini" && (
+      <button onClick={() => setActiveTab("ordini")} className={`px-6 py-3 rounded ${activeTab === "ordini" ? "bg-black text-white" : "bg-white text-black"}`}>Ordini</button>
+      <button onClick={() => setActiveTab("menu")} className={`px-6 py-3 rounded ${activeTab === "menu" ? "bg-black text-white" : "bg-white text-black"}`}>Menu</button>
+      <button onClick={() => setActiveTab("richieste")} className={`px-6 py-3 rounded ${activeTab === "richieste" ? "bg-black text-white" : "bg-white text-black"}`}>Richieste Cameriere</button>
+    </div>
+
+      {/* SEZIONE ORDINI */}
+      {activeTab === "ordini" && (
         <section className="mb-8">
           {/* ORDINI ATTIVI */}
           <div className="overflow-x-auto">
@@ -193,6 +235,7 @@ export default function GestionePage() {
                   <th className="p-2">Data</th>
                   <th className="p-2">Stato</th>
                   <th className="p-2">Prodotti</th>
+                  <th className="p-2">Pagamento</th>
                   <th className="p-2">Azioni</th>
                 </tr>
               </thead>
@@ -201,43 +244,33 @@ export default function GestionePage() {
                   <tr key={o.id_ordine} className="border-b">
                     <td className="p-2">{o.id_ordine}</td>
                     <td className="p-2">{o.id_ombrellone}</td>
-                    <td className="p-2">
-                      {new Date(o.data_ordine).toLocaleString()}
-                    </td>
+                    <td className="p-2">{new Date(o.data_ordine).toLocaleString()}</td>
                     <td className="p-2 font-semibold">{o.stato_ordine}</td>
                     <td className="p-2">
                       <ul className="list-disc ml-4">
-                        {(o.ordiniprodotti || o.ordini_prodotti || []).map(
-                          (p, idx) => (
-                            <li key={idx}>
-                              {p.quantita} x{" "}
-                              {p.prodotto?.nome || p.id_prodotto}
-                            </li>
-                          )
-                        )}
+                        {(o.ordiniprodotti || o.ordini_prodotti || []).map((p, idx) => (
+                          <li key={idx}>
+                            {p.quantita} x {p.prodotto?.nome || p.id_prodotto}
+                          </li>
+                        ))}
                       </ul>
                     </td>
+                    <td className="p-2 font-semibold">{o.metodoPagamento}</td> 
                     <td className="p-2 space-x-2">
                       <button
-                        onClick={() =>
-                          aggiornaStatoOrdine(o.id_ordine, "in preparazione")
-                        }
+                        onClick={() => aggiornaStatoOrdine(o.id_ordine, "in preparazione")}
                         className="bg-yellow-300 px-2 py-1 rounded"
                       >
                         In Preparazione
                       </button>
                       <button
-                        onClick={() =>
-                          aggiornaStatoOrdine(o.id_ordine, "completato")
-                        }
+                        onClick={() => aggiornaStatoOrdine(o.id_ordine, "completato")}
                         className="bg-green-400 px-2 py-1 rounded"
                       >
                         Completa
                       </button>
                       <button
-                        onClick={() =>
-                          aggiornaStatoOrdine(o.id_ordine, "annullato")
-                        }
+                        onClick={() => aggiornaStatoOrdine(o.id_ordine, "annullato")}
                         className="bg-red-600 text-white px-2 py-1 rounded"
                       >
                         Annulla
@@ -270,6 +303,7 @@ export default function GestionePage() {
                         <th className="p-2">Ombrellone</th>
                         <th className="p-2">Data</th>
                         <th className="p-2">Prodotti</th>
+                        <th className="p-2">Pagamento</th> {/* nuova colonna */}
                       </tr>
                     </thead>
                     <tbody>
@@ -277,21 +311,17 @@ export default function GestionePage() {
                         <tr key={o.id_ordine} className="border-b">
                           <td className="p-2">{o.id_ordine}</td>
                           <td className="p-2">{o.id_ombrellone}</td>
-                          <td className="p-2">
-                            {new Date(o.data_ordine).toLocaleString()}
-                          </td>
+                          <td className="p-2">{new Date(o.data_ordine).toLocaleString()}</td>
                           <td className="p-2">
                             <ul className="list-disc ml-4">
-                              {(o.ordiniprodotti || o.ordini_prodotti || []).map(
-                                (p, idx) => (
-                                  <li key={idx}>
-                                    {p.quantita} x{" "}
-                                    {p.prodotto?.nome || p.id_prodotto}
-                                  </li>
-                                )
-                              )}
+                              {(o.ordiniprodotti || o.ordini_prodotti || []).map((p, idx) => (
+                                <li key={idx}>
+                                  {p.quantita} x {p.prodotto?.nome || p.id_prodotto}
+                                </li>
+                              ))}
                             </ul>
                           </td>
+                          <td className="p-2 font-semibold">{o.metodoPagamento}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -322,6 +352,7 @@ export default function GestionePage() {
                         <th className="p-2">Ombrellone</th>
                         <th className="p-2">Data</th>
                         <th className="p-2">Prodotti</th>
+                        <th className="p-2">Pagamento</th> {/* nuova colonna */}
                       </tr>
                     </thead>
                     <tbody>
@@ -329,21 +360,17 @@ export default function GestionePage() {
                         <tr key={o.id_ordine} className="border-b">
                           <td className="p-2">{o.id_ordine}</td>
                           <td className="p-2">{o.id_ombrellone}</td>
-                          <td className="p-2">
-                            {new Date(o.data_ordine).toLocaleString()}
-                          </td>
+                          <td className="p-2">{new Date(o.data_ordine).toLocaleString()}</td>
                           <td className="p-2">
                             <ul className="list-disc ml-4">
-                              {(o.ordiniprodotti || o.ordini_prodotti || []).map(
-                                (p, idx) => (
-                                  <li key={idx}>
-                                    {p.quantita} x{" "}
-                                    {p.prodotto?.nome || p.id_prodotto}
-                                  </li>
-                                )
-                              )}
+                              {(o.ordiniprodotti || o.ordini_prodotti || []).map((p, idx) => (
+                                <li key={idx}>
+                                  {p.quantita} x {p.prodotto?.nome || p.id_prodotto}
+                                </li>
+                              ))}
                             </ul>
                           </td>
+                          <td className="p-2 font-semibold">{o.metodoPagamento}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -516,6 +543,56 @@ export default function GestionePage() {
           </section>
         </>
       )}
+
+       {/* TAB Richieste Cameriere */}
+    {activeTab === "richieste" && (
+      <div>
+        <h2 className="text-xl mb-2">Richieste Cameriere</h2>
+
+        {console.log("STATO:", { loading, error, richieste })}
+
+        {loading ? (
+          <p>Caricamento...</p>
+        ) : error ? (
+          <p className="text-red-500">{error}</p>
+        ) : richieste.length === 0 ? (
+          <p>Nessuna richiesta in attesa</p>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="min-w-full border">
+              <thead>
+                <tr className="bg-gray-200">
+                  <th className="p-2 border">ID</th>
+                  <th className="p-2 border">Ombrellone</th>
+                  <th className="p-2 border">Richiesta</th>
+                  <th className="p-2 border">Azione</th>
+                </tr>
+              </thead>
+              <tbody>
+                {richieste.map((r) => {
+                  console.log("RENDER riga richiesta:", r);
+                  return (
+                    <tr key={r.id_richiesta} className="border-b">
+                      <td className="p-2">{r.id_richiesta}</td>
+                      <td className="p-2">{r.id_ombrellone}</td>
+                      <td className="p-2">{r.richiesta}</td>
+                      <td className="p-2">
+                        <button
+                          onClick={() => evadiRichiesta(r.id_richiesta)}
+                          className="bg-red-600 text-white px-2 py-1 rounded"
+                        >
+                          Evadi
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+    )}
     </div>
   );
 }

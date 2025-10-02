@@ -63,6 +63,7 @@ router.post("/", async (req, res) => {
       data: {
         id_ombrellone,
         stato_ordine: "in attesa",
+        metodoPagamento,
         data_ordine: new Date(),
         ordiniprodotti: {
           create: prodotti.map((p) => ({

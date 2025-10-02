@@ -4,13 +4,13 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { createOrder } from "../services/api";
 
-const BACKEND_URL= 'http://localhost:4000';
+const BACKEND_URL = "http://localhost:4000";
 
 const allProducts = [
   { id_prodotto: 13, nome: "Acqua Minerale", img: BACKEND_URL + "/uploads/acqua.jpeg", prezzo: 1.0 },
-  { id_prodotto: 9, nome: "Patatine Rustiche", img: BACKEND_URL + "/uploads/rustica.jpeg", prezzo: 2.0},
-  { id_prodotto: 20, nome: "The limone", img: BACKEND_URL + "/uploads/the limone.jpeg", prezzo: 1.5},
-  { id_prodotto: 51, nome: "Brasilena", img: BACKEND_URL + "/uploads/brasilena.jpg", prezzo: 2.5}
+  { id_prodotto: 9, nome: "Patatine Rustiche", img: BACKEND_URL + "/uploads/rustica.jpeg", prezzo: 2.0 },
+  { id_prodotto: 20, nome: "The limone", img: BACKEND_URL + "/uploads/the limone.jpeg", prezzo: 1.5 },
+  { id_prodotto: 51, nome: "Brasilena", img: BACKEND_URL + "/uploads/brasilena.jpg", prezzo: 2.5 }
 ];
 
 function getRandomProducts(array, count) {
@@ -21,7 +21,7 @@ function getRandomProducts(array, count) {
 export default function CheckoutPage() {
   const { cartItems, clearCart, addToCart } = useCart();
   const { tableId } = useTable();
-  const [paymentMethod, setPaymentMethod] = useState("contanti");
+  const [metodoPagamento, setMetodoPagamento] = useState("CONTANTI"); // default valido
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(null);
@@ -34,13 +34,15 @@ export default function CheckoutPage() {
     setSuggested(getRandomProducts(allProducts, 3));
   }, []);
 
-  const handleOrder = async () => {
+  const handleOrder = async (e) => {
+    e?.preventDefault();
     setLoading(true);
     setError(null);
+
     try {
       const ordine = {
         id_ombrellone: tableId,
-        metodoPagamento: paymentMethod,
+        metodoPagamento, 
         prodotti: cartItems.map((p) => ({
           id_prodotto: p.id_prodotto,
           quantita: p.quantity,
@@ -50,7 +52,8 @@ export default function CheckoutPage() {
 
       await createOrder(ordine);
 
-      await fetch("http://localhost:4000/api/ombrelloni/libera", {
+      // libera ombrellone
+      await fetch(`${BACKEND_URL}/api/ombrelloni/libera`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ numero_ombrellone: tableId }),
@@ -69,28 +72,20 @@ export default function CheckoutPage() {
   if (success) {
     return (
       <div className="p-6 text-center bg-gradient-to-r from-[#ffde59] to-[#ff914D] h-screen flex flex-col items-center justify-center gap-4 relative">
+        <img src="/src/img/barca_finale.png" className="bg-ship" />
+        <img src="/src/img/granchio.png" className="bg-granchio" />
 
-      <img src="/src/img/barca_finale.png" className="bg-ship" />
-      <img src="/src/img/granchio.png" className="bg-granchio" />
-      
-      <h2 className="text-4xl z-50 mb-30 font-bold text-[#ff3131]">✅ Ordine inviato!</h2>
-      <p className="mb-25 z-50 text-2xl"> <strong>Il tuo ordine arriverà a breve </strong></p>
-    
-      <button
-        onClick={() => navigate("/menu")}
-        className="z-50 bg-yellow-600 hover:bg-gradient-to-l hover:from-[#ff914D] hover:to-[#ffde59] text-white px-7 py-5 rounded-lg shadow transition mt-3 mr-3"
-      >
-        Torna al Menu
-      </button>
-    
-      <button
-        onClick={() => navigate("/")}
-        className="z-50 bg-yellow-600 hover:bg-gradient-to-l hover:from-[#ff914D] hover:to-[#ffde59] text-white px-7 py-5 rounded-lg shadow transition mt-10 mr-3"
-      >
-        Torna al login
-      </button>
-    </div>
+        <h2 className="text-4xl z-50 mb-30 font-bold text-[#ff3131]">✅ Ordine inviato!</h2>
+        <p className="mb-25 z-50 text-2xl"><strong>Il tuo ordine arriverà a breve </strong></p>
 
+        <button onClick={() => navigate("/menu")} className="z-50 bg-yellow-600 hover:bg-gradient-to-l hover:from-[#ff914D] hover:to-[#ffde59] text-white px-7 py-5 rounded-lg shadow transition mt-3 mr-3">
+          Torna al Menu
+        </button>
+
+        <button onClick={() => navigate("/")} className="z-50 bg-yellow-600 hover:bg-gradient-to-l hover:from-[#ff914D] hover:to-[#ffde59] text-white px-7 py-5 rounded-lg shadow transition mt-10 mr-3">
+          Torna al login
+        </button>
+      </div>
     );
   }
 
@@ -104,9 +99,7 @@ export default function CheckoutPage() {
         <p>Il carrello è vuoto.</p>
       ) : (
         <>
-          {/* Lista carrello */}
           <ul className="space-y-4 flex-1">
-
             {cartItems.map((item, idx) => (
               <li key={item.id_prodotto ? item.id_prodotto : idx} className="flex items-center space-x-4 border-b border-[#ff3131]">
                 <img src={item.img_prodotto} alt={item.nome} className="w-16 h-16 object-cover rounded " />
@@ -115,81 +108,58 @@ export default function CheckoutPage() {
                   <p className="font-semibold">x {item.quantity}</p>
                 </div>
                 <span className="font-semibold ">{(item.prezzo * item.quantity).toFixed(2)} €</span>
-              {/* Linea colorata, tranne dopo l’ultimo elemento */}
-              {idx !== cartItems.length - 1 && 
-              <div className="h-1 bg-gradient-to-r from-[#ffde59] to-[#ff914D] my-3 rounded-full"></div>}
               </li>
             ))}
           </ul>
 
-{/* Sezione suggerimenti */}
-<div className="mt-6">
-  <h3 className="font-semibold text-[#ff3131] text-3xl justify-center text-center mb-2">
-    Potresti ordinare anche:
-  </h3>
-  <div className="flex gap-4">
-    {suggested.map((prod, idx) => (
-      <div
-        key={idx}
-        onClick={() => addToCart({
-          id_prodotto: prod.id_prodotto,
-          nome: prod.nome,
-          prezzo: prod.prezzo,
-          img_prodotto: prod.img
-        })}
-        className="flex flex-col items-center bg-white p-2 rounded shadow w-28 cursor-pointer hover:scale-105 transition"
-      >
-        <img src={prod.img} alt={prod.nome} className="w-20 h-20 object-cover rounded" />
-        <span className="text-sm mt-1">{prod.nome}</span>
-        <span className="font-semibold">{prod.prezzo.toFixed(2)} €</span>
-      </div>
-    ))}
-  </div>
-</div>
-
-          {/* Totale */}
-          <div className="mt-4 text-2xl font-bold">Totale: {totale.toFixed(2)} €</div>
-
-          {/* Metodo di pagamento */}
-          <div className="mt-4">
-            <h3 className="font-semibold mb-2">Metodo di pagamento</h3>
-            <label className="flex items-center space-x-2">
-              <input
-                type="radio"
-                value="contanti"
-                checked={paymentMethod === "contanti"}
-                onChange={(e) => setPaymentMethod(e.target.value)}
-              />
-              <span>Contanti</span>
-            </label>
-            <label className="flex items-center space-x-2">
-              <input
-                type="radio"
-                value="carta"
-                checked={paymentMethod === "carta"}
-                onChange={(e) => setPaymentMethod(e.target.value)}
-              />
-              <span>Carta</span>
-            </label>
+          <div className="mt-6">
+            <h3 className="font-semibold text-[#ff3131] text-3xl justify-center text-center mb-2">
+              Potresti ordinare anche:
+            </h3>
+            <div className="flex gap-4">
+              {suggested.map((prod, idx) => (
+                <div
+                  key={idx}
+                  onClick={() => addToCart({ id_prodotto: prod.id_prodotto, nome: prod.nome, prezzo: prod.prezzo, img_prodotto: prod.img })}
+                  className="flex flex-col items-center bg-white p-2 rounded shadow w-28 cursor-pointer hover:scale-105 transition"
+                >
+                  <img src={prod.img} alt={prod.nome} className="w-20 h-20 object-cover rounded" />
+                  <span className="text-sm mt-1">{prod.nome}</span>
+                  <span className="font-semibold">{prod.prezzo.toFixed(2)} €</span>
+                </div>
+              ))}
+            </div>
           </div>
 
+          <div className="mt-4 text-2xl font-bold">Totale: {totale.toFixed(2)} €</div>
+
+          <form onSubmit={handleOrder} className="p-4 space-y-4">
+            <h2 className="text-xl font-bold">Metodo di pagamento</h2>
+
+            <select
+              value={metodoPagamento}
+              onChange={(e) => setMetodoPagamento(e.target.value)}
+              className="border rounded-lg p-2 w-full">
+
+              <option value="CONTANTI">Contanti</option>
+                <option value="CARTA">Carta</option>
+                <option value="CASSA">Cassa</option>
+              </select>
+
+            <button type="submit" disabled={loading} className="bg-yellow-600 hover:bg-gradient-to-l hover:from-[#ff914D] hover:to-[#ffde59] text-white px-3 py-5 rounded-lg shadow transition ml-2 mr-5">
+              {loading ? "Invio ordine..." : "Conferma Ordine"}
+            </button>
+
+            <button
+              onClick={() => navigate("/menu")}
+              className="bg-yellow-600 hover:bg-gradient-to-l hover:from-[#ff914D] hover:to-[#ffde59] text-white px-4 py-5 rounded-lg shadow transition ml-6 mr-5"
+              type="button"
+            >
+              Indietro
+            </button>
+          </form>
+
           {error && <p className="text-red-500 mt-2">{error}</p>}
-
-          <button
-            onClick={() => navigate("/menu")}
-            className="bg-yellow-600 hover:bg-gradient-to-l hover:from-[#ff914D] hover:to-[#ffde59] text-white px-10 py-5 rounded-lg shadow transition ml-2 mr-5"
-          >
-            Indietro
-          </button>
-
-          <button
-            onClick={handleOrder}
-            disabled={loading}
-            className="bg-yellow-600 hover:bg-gradient-to-l hover:from-[#ff914D] hover:to-[#ffde59] text-white px-5 py-5 rounded-lg shadow transition mt-5 mr-3"
-          >
-            {loading ? "Invio ordine..." : "Conferma Ordine"}
-          </button>
-
         </>
       )}
     </div>

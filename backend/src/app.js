@@ -9,6 +9,8 @@ import categorieRouter from "./routes/categorieRouter.js";
 import prodottiRouter from "./routes/prodottiRouter.js";
 import ordineRouter from "./routes/ordiniRouter.js";
 import uplodRouter from "./routes/uplodRouter.js";
+import richiesteCameriere from "./routes/richiesteCameriere.js";
+import ombrellone from "./routes/ombrellone.js";
 
 const app = express();
 const prisma = new PrismaClient();
@@ -21,6 +23,8 @@ app.use("/api/categorie", categorieRouter);
 app.use("/api/prodotti", prodottiRouter);
 app.use("/api/ordini", ordineRouter);
 app.use("/api/upload", uplodRouter);
+app.use("/api/richiesteCameriere", richiesteCameriere);
+app.use("/api/ombrellone", ombrellone);
 
 
 //upload
