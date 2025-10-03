@@ -20,6 +20,7 @@ export default function GestionePage() {
   const [activeTab, setActiveTab] = useState("ordini");
   const [showCompletati, setShowCompletati] = useState(false);
   const [showAnnullati, setShowAnnullati] = useState(false);
+  const [showActions, setShowActions] = useState(false);
 
 // Richieste cameriere
 const [richieste, setRichieste] = useState([]);
@@ -210,6 +211,29 @@ const evadiRichiesta = async (id) => {
 if (loading) return <p>Caricamento...</p>;
 if (error) return <p className="text-red-500">{error}</p>;
 
+//libera ombrellone
+const liberaOmbrellone = async (numero_ombrellone) => {
+  try {
+    const res = await fetch(`${API_BASE}/api/ombrelloni/libera`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ numero_ombrellone }),
+    });
+
+    if (!res.ok) throw new Error("Errore liberazione ombrellone");
+
+    setMessage(`Ombrellone ${numero_ombrellone} liberato con successo ✅`);
+    fetchOrdini();
+
+    // Dopo 3 secondi sparisce la notifica
+    setTimeout(() => setMessage(""), 3000);
+  } catch (err) {
+    console.error("Errore liberazione ombrellone:", err);
+    setMessage("Errore durante la liberazione dell’ombrellone ❌");
+    setTimeout(() => setMessage(""), 3000);
+  }
+};
+
   return (
     <div className="p-6 bg-gradient-to-b from-lime-50 to-lime-600 min-h-screen">
       <h1 className="text-3xl font-bold mb-6 text-lime-700">Gestione Acqua Serena</h1>
@@ -217,12 +241,12 @@ if (error) return <p className="text-red-500">{error}</p>;
 
       {/* TAB */}
       <div className="mb-6 space-x-0">
-      <button onClick={() => setActiveTab("ordini")} className={`px-6 py-3 rounded ${activeTab === "ordini" ? "bg-black text-white" : "bg-white text-black"}`}>Ordini</button>
+      <button onClick={() => setActiveTab("ordini")} className={`px-6 py-3 rounded ${activeTab === "ordini" ? "bg-black text-white" : "bg-white text-black"}`}>Home</button>
       <button onClick={() => setActiveTab("menu")} className={`px-6 py-3 rounded ${activeTab === "menu" ? "bg-black text-white" : "bg-white text-black"}`}>Menu</button>
       <button onClick={() => setActiveTab("richieste")} className={`px-6 py-3 rounded ${activeTab === "richieste" ? "bg-black text-white" : "bg-white text-black"}`}>Richieste Cameriere</button>
     </div>
 
-      {/* SEZIONE ORDINI */}
+      {/* SEZIONE HOME */}
       {activeTab === "ordini" && (
         <section className="mb-8">
           {/* ORDINI ATTIVI */}
@@ -255,8 +279,18 @@ if (error) return <p className="text-red-500">{error}</p>;
                         ))}
                       </ul>
                     </td>
-                    <td className="p-2 font-semibold">{o.metodoPagamento}</td> 
+                    <td className="p-2 font-semibold">{o.metodoPagamento}</td>
+
+                {/* pulsante cucina */}
                     <td className="p-2 space-x-2">
+                    <button
+                      onClick={() => setShowActions(!showActions)}
+                      className="bg-black text-white px-3 py-1 rounded"
+                    >
+                      {showActions ? "Chiudi" : "👨‍🍳"}
+                    </button>
+                      {showActions && (
+                    <>
                       <button
                         onClick={() => aggiornaStatoOrdine(o.id_ordine, "in preparazione")}
                         className="bg-yellow-300 px-2 py-1 rounded"
@@ -264,10 +298,10 @@ if (error) return <p className="text-red-500">{error}</p>;
                         In Preparazione
                       </button>
                       <button
-                        onClick={() => aggiornaStatoOrdine(o.id_ordine, "completato")}
+                        onClick={() => aggiornaStatoOrdine(o.id_ordine, "consegnato")}
                         className="bg-green-400 px-2 py-1 rounded"
                       >
-                        Completa
+                        Consegnato
                       </button>
                       <button
                         onClick={() => aggiornaStatoOrdine(o.id_ordine, "annullato")}
@@ -275,7 +309,23 @@ if (error) return <p className="text-red-500">{error}</p>;
                       >
                         Annulla
                       </button>
-                    </td>
+                    </>
+                  )} 
+                <button
+                onClick={() => liberaOmbrellone(o.id_ombrellone)}
+                className="bg-black text-white px-2 py-1 rounded"
+              >
+                Libera Ombrellone
+              </button> 
+              <button
+                onClick={() => aggiornaStatoOrdine(o.id_ordine, "completato") && liberaOmbrellone(o.id_ombrellone)}
+                className="bg-green-800 px-2 py-1 rounded text-white"
+                >
+                  Completato
+                </button>
+
+                
+                </td>
                   </tr>
                 ))}
               </tbody>
@@ -303,7 +353,7 @@ if (error) return <p className="text-red-500">{error}</p>;
                         <th className="p-2">Ombrellone</th>
                         <th className="p-2">Data</th>
                         <th className="p-2">Prodotti</th>
-                        <th className="p-2">Pagamento</th> {/* nuova colonna */}
+                        <th className="p-2">Pagamento</th> 
                       </tr>
                     </thead>
                     <tbody>

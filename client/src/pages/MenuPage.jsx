@@ -79,7 +79,7 @@ const [activeButton, setActiveButton] = useState(null);
 
   return (
     <div className="relative min-h-screen flex flex-col">
-      <div className="absolute inset-0 z-10 bg-[url('/img/sfondo.png')] bg-center bg-no-repeat bg-fixed bg-contain opacity-40" />
+      <div className="absolute inset-0 z-10 bg-[url('/img/sfondo.png')] bg-center bg-no-repeat bg-fixed bg-contain" />
       <div className="absolute inset-0 z-0 bg-gradient-to-r from-[#ffde59] to-[#ff914D]" />
 
       <Header />
@@ -152,9 +152,9 @@ const [activeButton, setActiveButton] = useState(null);
             {categories.map((cat) => (
               <button
                 key={cat.id_categoria}
-                className={`w-full mt-3 bg-[#e8af20] text-black text-l py-3 rounded-xl shadow-md hover:from-[#ffde59] hover:to-[#ff914D] transition font-bold ${
+                className={`w-full mt-3 bg-amber-300 text-black text-l py-3 rounded-xl shadow-md hover:from-[#ffde59] hover:to-[#ff914D] transition font-bold ${
                   selectedCategory?.id_categoria === cat.id_categoria
-                    ? " text-white border-orange-500"
+                    ? " text-red-500 border-orange-500"
                     : " text-black hover:bg-orange-100/80"
                 }`}
                 onClick={() => {
@@ -173,14 +173,18 @@ const [activeButton, setActiveButton] = useState(null);
           {selectedCategory ? (
             <CategoryProducts categoryId={selectedCategory.id_categoria} addToCart={addToCart} />
           ) : (
+<<<<<<< HEAD
             <p className="text-[#ff0000] text-center bg-amber-200 rounded-4xl">
+=======
+            <p className="text-black text-center bg-amber-100 rounded-4xl">
+>>>>>>> a4902abb4f77caec66c1a122b9e5f5ada21afe72
               Seleziona una categoria per vedere i prodotti</p>
           )}
         </div>
       </main>
 
       <footer className="relative z-30 w-full bg-gradient-to-r from-[#ffda6a] to-[#fff7de] p-5 shadow flex flex-col items-center justify-center text-center">
-        <p className="text-[#ff3131] text-lg sm:text-2xl md:text-3xl break-words whitespace-pre-line leading-tight">
+        <p className="text-black text-lg sm:text-2xl md:text-3xl break-words whitespace-pre-line leading-tight">
           © 2025 Lido Acqua Serena<br className="block sm:hidden" />
           Tutti i diritti riservati
         </p>

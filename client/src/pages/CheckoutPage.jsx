@@ -52,13 +52,6 @@ export default function CheckoutPage() {
 
       const createdOrder = await createOrder(ordine);
 
-      // libera ombrellone
-      await fetch(`${BACKEND_URL}/api/ombrelloni/libera`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ numero_ombrellone: tableId }),
-      });
-
       setSuccess(true);
       clearCart();
 

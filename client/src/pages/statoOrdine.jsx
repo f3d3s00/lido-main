@@ -4,6 +4,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { Package, Truck, CheckCircle } from "lucide-react";
 import { Card, CardContent } from "../components/ui/card";
 
+
 const BACKEND_URL = "http://localhost:4000";
 
 export default function StatoOrdine() {
@@ -36,7 +37,7 @@ export default function StatoOrdine() {
       case "in preparazione":
         return { icon: <Truck className="text-blue-500" />, label: "In preparazione" };
       case "spedito":
-        return { icon: <Truck className="text-blue-500" />, label: "Spedito" };
+        return { icon: <Truck className="text-blue-500" />, label: "Consegnato" };
       case "consegnato":
         return { icon: <CheckCircle className="text-green-600" />, label: "Consegnato" };
       default:
@@ -48,6 +49,27 @@ export default function StatoOrdine() {
   if (error) return <p className="text-center mt-10 text-red-500">{error}</p>;
 
   const { icon, label } = getStatusUI(ordine.stato_ordine);
+
+//libera ombrellone
+const liberaOmbrellone = async (numero_ombrellone) => {
+  console.log("Sto liberando ombrellone numero:", numero_ombrellone);
+  try {
+    const res = await fetch(`${BACKEND_URL}/api/ombrelloni/libera`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ numero_ombrellone }),
+    });
+
+    if (!res.ok) {
+      throw new Error("Errore durante la liberazione dell'ombrellone");
+    }
+
+    console.log(`Ombrellone ${numero_ombrellone} liberato con successo`);
+  } catch (err) {
+    console.error(err);
+  }
+};
+
 
   return (
     <div className="relative p-6 bg-gradient-to-r from-[#ffde59] to-[#ff914D] min-h-screen flex flex-col items-center justify-center overflow-hidden">
@@ -96,11 +118,16 @@ export default function StatoOrdine() {
           Torna al Menu
         </button>
         <button
-          onClick={() => navigate("/")}
-          className="bg-yellow-600 hover:bg-gradient-to-l hover:from-[#ff914D] hover:to-[#ffde59] text-white px-7 py-4 rounded-lg shadow transition"
-        >
-          Torna al login
-        </button>
+        onClick={async () => {
+          if (ordine?.id_ombrellone){
+          await liberaOmbrellone(ordine.id_ombrellone);
+          }
+          navigate("/");
+        }}
+        className="bg-yellow-600 hover:bg-gradient-to-l hover:from-[#ff914D] hover:to-[#ffde59] text-white px-7 py-4 rounded-lg shadow transition"
+      >
+        Torna al login
+      </button>
       </div>
     </div>
   );
