@@ -173,7 +173,7 @@ const [activeButton, setActiveButton] = useState(null);
           {selectedCategory ? (
             <CategoryProducts categoryId={selectedCategory.id_categoria} addToCart={addToCart} />
           ) : (
-            <p className="text-[#ff0000] text-center bg-amber-300 rounded-4xl">
+            <p className="text-[#ff0000] text-center bg-amber-200 rounded-4xl">
               Seleziona una categoria per vedere i prodotti</p>
           )}
         </div>
@@ -219,7 +219,7 @@ function CategoryProducts({ categoryId, addToCart }) {
   return (
     <div className="flex flex-col gap-5">
       {products.map((product) => (
-        <div key={product.id_prodotto} className="rounded-3xl shadow-xl hover:shadow-2xl transition p-4 flex flex-col bg-amber-100 border border-amber-400">
+        <div key={product.id_prodotto} className="rounded-3xl shadow-xl hover:shadow-2xl transition p-4 flex flex-col bg-white border border-amber-400">
           <img src={product.img_prodotto} alt={product.nome} className="w-full h-48 object-contain rounded-2xl mb-3" />
           <h3 className="text-xl font-bold text-black">{product.nome}</h3>
           {product.descrizione && <p className="text-gray-700 italic mb-2">{product.descrizione}</p>}

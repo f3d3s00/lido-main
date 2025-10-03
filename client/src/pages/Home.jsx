@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTable } from "../context/TableContext";
+import { useCart } from "../context/CartContext";
 
 export default function Home() {
   const { setTableId } = useTable();
+  const { clearCart } = useCart();
   const [ombrelloni, setOmbrelloni] = useState([]);
   const [numeroOmbrellone, setNumeroOmbrellone] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
@@ -15,6 +17,8 @@ export default function Home() {
         const res = await fetch("http://localhost:4000/api/ombrelloni");
         if (!res.ok) throw new Error("Errore caricamento ombrelloni");
         setOmbrelloni(await res.json());
+        clearCart();
+        localStorage.clear();
       } catch (err) {
         console.error(err);
       }
@@ -45,7 +49,7 @@ export default function Home() {
 
   return (
     <div className="relative min-h-screen flex flex-col items-center justify-start ">
-      
+
       {/* Sfondo immagine */}
       <div className="absolute inset-0 z-10 bg-[url('/img/sfondo.png')] bg-center bg-no-repeat bg-fixed bg-contain" />
       {/* Overlay gradiente sopra l'immagine */}
@@ -87,11 +91,10 @@ export default function Home() {
               {ombrelloni.map((o) => (
                 <li
                   key={o.id_ombrellone}
-                  className={`px-3 py-2 cursor-pointer hover:bg-lime-100 ${
-                    o.stato_ombrellone !== "libero"
+                  className={`px-3 py-2 cursor-pointer hover:bg-lime-100 ${o.stato_ombrellone !== "libero"
                       ? "text-gray-400 cursor-not-allowed"
                       : ""
-                  }`}
+                    }`}
                   onClick={() => {
                     if (o.stato_ombrellone === "libero") {
                       setNumeroOmbrellone(o.numero_ombrellone.toString());

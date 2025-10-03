@@ -6,8 +6,21 @@ const CartContext = createContext();
 
 import { useEffect } from "react";
 
+
 export function CartProvider({ children }) {
-  // Carica il carrello da localStorage all'avvio
+  // Stato sidebar carrello
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  // id_ombrellone gestito separatamente, persistente
+  const [ombrelloneId, setOmbrelloneIdState] = useState(() => {
+    try {
+      const saved = localStorage.getItem("ombrelloneId");
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      return null;
+    }
+  });
+
+  // Carrello unico per tutti
   const [cartItems, setCartItems] = useState(() => {
     try {
       const saved = localStorage.getItem("cartItems");
@@ -16,12 +29,21 @@ export function CartProvider({ children }) {
       return [];
     }
   });
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   // Salva il carrello su localStorage ogni volta che cambia
   useEffect(() => {
     localStorage.setItem("cartItems", JSON.stringify(cartItems));
   }, [cartItems]);
+
+  // Salva l'id ombrellone su localStorage ogni volta che cambia
+  useEffect(() => {
+    localStorage.setItem("ombrelloneId", JSON.stringify(ombrelloneId));
+  }, [ombrelloneId]);
+
+  // Cambia ombrellone
+  const setOmbrelloneId = (newId) => {
+    setOmbrelloneIdState(newId);
+  };
 
   const addToCart = (item) => {
     setCartItems((prev) => {
@@ -61,6 +83,7 @@ export function CartProvider({ children }) {
   // 🧹 nuovo metodo per svuotare il carrello
   const clearCart = () => {
     setCartItems([]);
+    localStorage.removeItem("cartItems");
   };
 
   const toggleSidebar = () => setIsSidebarOpen((prev) => !prev);
@@ -85,6 +108,8 @@ export function CartProvider({ children }) {
         toggleSidebar,
         totalPrice,
         totalQuantity,
+        ombrelloneId,
+        setOmbrelloneId,
       }}
     >
       {children}
