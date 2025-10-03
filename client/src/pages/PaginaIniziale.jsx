@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import Header from "../components/Header";
 
 export default function PaginaIniziale() {
   const navigate = useNavigate();
@@ -24,14 +25,10 @@ export default function PaginaIniziale() {
   return (
     <div className="relative min-h-screen flex flex-col">
       {/* HEADER */}
-      <header className="relative z-10 w-full flex justify-center py-0">
-        <h1 className=" font-title w-full text-6xl justify-center text-center font-vivaldi text-red-700 bg-gradient-to-r from-[#ffde59] to-[#ff914D] p-6 pl-16 pb-0 shadow">
-          <i>Acqua Serena</i>
-        </h1>
-      </header>
+      <Header />
 
       {/* CONTENUTO CENTRALE */}
-      <main className="relative z-20 flex-1 flex flex-col items-center justify-start gap-10 p-3 mt-4">
+      <main className="relative z-20 flex-1 flex flex-col items-center justify-start gap-10 p-3 mt-25">
        
         {/* Card slider immagini */}
         <div className="relative w-full max-w-2xl h-150 overflow-hidden rounded-2xl shadow-lg">
@@ -64,7 +61,7 @@ export default function PaginaIniziale() {
         </main>
 
          {/* FOOTER */}
-         <footer className="w-full text-4xl justify-center text-center font-vivaldi text-red-700 bg-gradient-to-r from-[#ffde59] to-[#ff914D]  p-6 shadow">
+         <footer className="w-full text-4xl justify-center text-center font-vivaldi text-red-700 bg-gradient-to-r from-[#ffda6a] to-[#fff7de]  p-6 shadow">
             <p className="text-orange-700 text-lg">
                  © 2025 Lido Acqua Serena - Tutti i diritti riservati
             </p>
