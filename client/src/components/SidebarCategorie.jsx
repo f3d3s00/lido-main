@@ -19,6 +19,10 @@ export default function SidebarCategorie({ isOpen, onClose }) {
     navigate(`/menu?categoria=${id_categoria}`);
   };
 
+  const goToPage = () => {
+    navigate("/PaginaIniziale");
+  }
+
   return (
     <div
       className={`fixed top-0 left-0 h-full w-64 bg-gradient-to-br from-[#ffde59]/80 to-[#ff914D]/80 backdrop-blur-md shadow-xl border-r border-yellow-300 transform transition-transform duration-300 z-50 ${
@@ -37,12 +41,15 @@ export default function SidebarCategorie({ isOpen, onClose }) {
             <button
               key={cat.id_categoria}
               onClick={() => handleCategoriaClick(cat.id_categoria)}
-              className="w-full text-left font-menu px-4 py-2 text-xl font-semibold hover:bg-lime-200/60 transition text-[#ff9100] shadow"
+              className="w-full text-left font-menu px-4 py-2 text-xl font-semibold hover:bg-orange-100/80 transition text-[#ff9100] shadow"
             >
               {cat.denominazione}
             </button>
           ))
         )}
+      </div>
+      <div className="w-full text-left font-menu px-4 py-2 text-xl font-semibold hover:bg-orange-100/80 transition text-[#ff9100] shadow"> 
+        <button onClick={goToPage} >Pagina iniziale</button>
       </div>
     </div>
   );

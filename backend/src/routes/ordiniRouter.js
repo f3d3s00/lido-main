@@ -4,6 +4,7 @@ import { PrismaClient } from "@prisma/client";
 const router = express.Router();
 const prisma = new PrismaClient();
 
+
 // GET /api/ordini - restituisce tutti gli ordini con prodotti associati
 router.get("/", async (req, res) => {
   try {
@@ -42,6 +43,30 @@ router.patch("/:id", async (req, res) => {
     res.status(500).json({ error: "Errore aggiornamento stato ordine" });
   }
 });
+
+// GET /api/ordini/:id - restituisce un singolo ordine con prodotti
+router.get("/:id", async (req, res) => {
+  const id_ordine = parseInt(req.params.id, 10);
+
+  try {
+    const ordine = await prisma.ordine.findUnique({
+      where: { id_ordine },
+      include: {
+        ordiniprodotti: { include: { prodotto: true } }
+      },
+    });
+
+    if (!ordine) {
+      return res.status(404).json({ error: "Ordine non trovato" });
+    }
+
+    res.json(ordine);
+  } catch (err) {
+    console.error("Errore caricamento ordine:", err);
+    res.status(500).json({ error: "Errore caricamento ordine" });
+  }
+});
+
 
 // POST /api/ordini - crea un nuovo ordine
 router.post("/", async (req, res) => {

@@ -10,6 +10,8 @@ export default function MenuPage() {
   const [errorCategories, setErrorCategories] = useState(null);
   const { addToCart } = useCart();
   const [searchParams] = useSearchParams();
+const [activeButton, setActiveButton] = useState(null);
+
 
   // Stati per il pop-up
   const [modalVisible, setModalVisible] = useState(false);
@@ -94,33 +96,51 @@ export default function MenuPage() {
           <div className="bg-white rounded-xl p-6 w-80 flex flex-col gap-4 relative">
             <h2 className="text-xl font-bold text-center">Seleziona azione</h2>
 
+            {/* Pulsante Cameriere */}
             <button
-              onClick={handleCallWaiter}
-              className="bg-[#e8af20] text-black py-2 rounded-3xl font-bold"
+              onClick={() => {
+                setActiveButton("waiter");
+                handleCallWaiter();
+              }}
+              className={`w-full mt-3 bg-[#e8af20] text-black text-l py-3 rounded-xl shadow-md transition font-bold
+                ${
+                  activeButton === "waiter"
+                    ? "text-white border-orange-500"
+                    : "text-black hover:bg-orange-100/80"
+                }`}
             >
               Richiedi Cameriere
             </button>
 
+            {/* Pulsante Ricerca Prodotto */}
             <button
               onClick={() => {
+                setActiveButton("search");
                 setProductSearchVisible(true);
               }}
-              className="bg-[#ff914D] text-black py-3 rounded-3xl font-bold"
+              className={`w-full mt-3 bg-[#e8af20] text-black text-l py-3 rounded-xl shadow-md transition font-bold
+                ${
+                  activeButton === "search"
+                    ? "text-white border-orange-500"
+                    : "text-black hover:bg-orange-100/80"
+                }`}
             >
               Ricerca Prodotto
             </button>
 
+            {/* Pulsante Chiudi */}
             <button
-              onClick={() => setModalVisible(false)}
-              className="bg-gray-300 text-black py-2 rounded-3xl font-bold"
+              onClick={() => {
+                setActiveButton(null); // reset
+                setModalVisible(false);
+              }}
+              className="w-full mt-3 bg-gray-300 text-black py-2 rounded-3xl font-bold"
             >
               Chiudi
             </button>
 
             {/* Ricerca prodotto live */}
-            {productSearchVisible && (
-              <ProductSearch addToCart={addToCart} />
-            )}
+            {productSearchVisible && <ProductSearch addToCart={addToCart} />}
           </div>
         </div>
       )}
@@ -135,7 +155,7 @@ export default function MenuPage() {
                 className={`w-full mt-3 bg-[#e8af20] text-black text-l py-3 rounded-xl shadow-md hover:from-[#ffde59] hover:to-[#ff914D] transition font-bold ${
                   selectedCategory?.id_categoria === cat.id_categoria
                     ? " text-white border-orange-500"
-                    : " text-black hover:bg-lime-100/60"
+                    : " text-black hover:bg-orange-100/80"
                 }`}
                 onClick={() => {
                   if (selectedCategory?.id_categoria === cat.id_categoria) {
@@ -153,7 +173,8 @@ export default function MenuPage() {
           {selectedCategory ? (
             <CategoryProducts categoryId={selectedCategory.id_categoria} addToCart={addToCart} />
           ) : (
-            <p className="text-[#ff3131] text-center">Seleziona una categoria per vedere i prodotti</p>
+            <p className="text-[#ff0000] text-center bg-amber-300 rounded-4xl">
+              Seleziona una categoria per vedere i prodotti</p>
           )}
         </div>
       </main>
@@ -255,7 +276,7 @@ function ProductSearch({ addToCart }) {
       {loading && <p className="text-gray-500 text-center">Caricamento...</p>}
 
       {productResults.length === 0 && searchQuery.trim() && !loading && (
-        <p className="text-gray-500 text-center">Nessun prodotto trovato</p>
+        <p className="text-red-500 text-center">Nessun prodotto trovato</p>
       )}
 
       {productResults.length > 0 && (

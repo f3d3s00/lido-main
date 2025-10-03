@@ -15,7 +15,7 @@ import GestionePage from "./pages/GestionePage";
 import { AuthProvider } from "./context/AuthContext";
 import LoginPage from "./pages/LoginPage";
 import PrivateRoute from "./components/PrivateRoute";
-
+import StatoOrdine from "./pages/statoOrdine";
 
 
 
@@ -61,7 +61,7 @@ function App() {
               <Route path="/category/:id" element={<CategoryPage />} />
               <Route path="/checkout" element={<CheckoutPage />} />
               <Route path="/login" element={<LoginPage />} />
-              <Route
+              <Route path="/ordine/:id" element={<StatoOrdine />} />              <Route
                 path="/gestione"
                 element={
                   <PrivateRoute>

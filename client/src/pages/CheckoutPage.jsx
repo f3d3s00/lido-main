@@ -50,7 +50,7 @@ export default function CheckoutPage() {
         })),
       };
 
-      await createOrder(ordine);
+      const createdOrder = await createOrder(ordine);
 
       // libera ombrellone
       await fetch(`${BACKEND_URL}/api/ombrelloni/libera`, {
@@ -61,33 +61,16 @@ export default function CheckoutPage() {
 
       setSuccess(true);
       clearCart();
-    } catch (err) {
+
+      //mi manda nella pagina statoOrdine
+      navigate(`/ordine/${createdOrder.id_ordine}`);
+      } catch (err) {
       console.error(err);
       setError(err.message || "Errore nell'invio dell'ordine");
     } finally {
       setLoading(false);
     }
   };
-
-  if (success) {
-    return (
-      <div className="p-6 text-center bg-gradient-to-r from-[#ffde59] to-[#ff914D] h-screen flex flex-col items-center justify-center gap-4 relative">
-        <img src="/src/img/barca_finale.png" className="bg-ship" />
-        <img src="/src/img/granchio.png" className="bg-granchio" />
-
-        <h2 className="text-4xl z-50 mb-30 font-bold text-[#ff3131]">✅ Ordine inviato!</h2>
-        <p className="mb-25 z-50 text-2xl"><strong>Il tuo ordine arriverà a breve </strong></p>
-
-        <button onClick={() => navigate("/menu")} className="z-50 bg-yellow-600 hover:bg-gradient-to-l hover:from-[#ff914D] hover:to-[#ffde59] text-white px-7 py-5 rounded-lg shadow transition mt-3 mr-3">
-          Torna al Menu
-        </button>
-
-        <button onClick={() => navigate("/")} className="z-50 bg-yellow-600 hover:bg-gradient-to-l hover:from-[#ff914D] hover:to-[#ffde59] text-white px-7 py-5 rounded-lg shadow transition mt-10 mr-3">
-          Torna al login
-        </button>
-      </div>
-    );
-  }
 
   return (
     <div className="p-6 bg-gradient-to-r from-[#ffde59] to-[#ff914D] min-h-screen rounded-xl shadow-md">

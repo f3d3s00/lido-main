@@ -1,11 +1,13 @@
 import { useState } from "react";
 import SidebarCategorie from "./SidebarCategorie";
 import { useLocation } from "react-router-dom"; // React Router
+import { useNavigate } from "react-router-dom";
 
  function Header() {
     const [open, setOpen] = useState(false);
     const location = useLocation(); // ottieni il percorso corrente
     console.log(location)
+    const navigate = useNavigate();
 
     return (
         <>
@@ -16,8 +18,10 @@ import { useLocation } from "react-router-dom"; // React Router
                 >
                     ☰
                 </button>
-                <h1 className="w-full text-6xl text-center font-title text-[#ff3131] ">
-                    <i>Acqua Serena</i>
+                <h1 className="w-full text-6xl text-center font-title text-[#ff3131] "
+                onClick={() => navigate("/menu")}
+                >
+                    Acqua Serena
                 </h1>
             </header>
 
