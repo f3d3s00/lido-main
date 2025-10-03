@@ -85,10 +85,8 @@ export default function MenuPage() {
       {/* Pulsante Richiesta */}
       <button
         onClick={() => setModalVisible(true)}
-        className="fixed top-20 right-3 z-50 bg-[#e8af20] text-black font-bold py-3 px-5 rounded-full shadow-lg hover:bg-yellow-400 transition"
-      >
-        AIUTO?
-      </button>
+        className="fixed text-3xl text-black top-22 right-7 p-3 transform transition-transform duration-300 z-50 rounded-4xl shadow border-orange-700 bg-gradient-to-r from-amber-110 to-[#ffda6a]"
+        > 𝒊 </button>
 
       {/* Modal principale */}
       {modalVisible && (
@@ -98,7 +96,7 @@ export default function MenuPage() {
 
             <button
               onClick={handleCallWaiter}
-              className="bg-[#e8af20] text-black py-2 rounded-lg font-bold"
+              className="bg-[#e8af20] text-black py-2 rounded-3xl font-bold"
             >
               Richiedi Cameriere
             </button>
@@ -107,14 +105,14 @@ export default function MenuPage() {
               onClick={() => {
                 setProductSearchVisible(true);
               }}
-              className="bg-[#ff914D] text-white py-2 rounded-lg font-bold"
+              className="bg-[#ff914D] text-black py-3 rounded-3xl font-bold"
             >
               Ricerca Prodotto
             </button>
 
             <button
               onClick={() => setModalVisible(false)}
-              className="bg-gray-300 text-black py-2 rounded-lg font-bold"
+              className="bg-gray-300 text-black py-2 rounded-3xl font-bold"
             >
               Chiudi
             </button>
@@ -200,7 +198,7 @@ function CategoryProducts({ categoryId, addToCart }) {
   return (
     <div className="flex flex-col gap-5">
       {products.map((product) => (
-        <div key={product.id_prodotto} className="rounded-3xl shadow-xl hover:shadow-2xl transition p-4 flex flex-col bg-white border border-amber-400">
+        <div key={product.id_prodotto} className="rounded-3xl shadow-xl hover:shadow-2xl transition p-4 flex flex-col bg-amber-100 border border-amber-400">
           <img src={product.img_prodotto} alt={product.nome} className="w-full h-48 object-contain rounded-2xl mb-3" />
           <h3 className="text-xl font-bold text-black">{product.nome}</h3>
           {product.descrizione && <p className="text-gray-700 italic mb-2">{product.descrizione}</p>}
