@@ -11,7 +11,10 @@ export default function SidebarCategorieButton() {
   // Lista delle pagine in cui vuoi mostrare il pulsante
   const allowedPages = ["/PaginaIniziale","/menu", "/category"]; 
 
-  if (!tableId || !allowedPages.includes(location.pathname)) return null;
+  if (!tableId || !allowedPages.includes(location.pathname)) {
+    open ? setOpen(false) : '';
+    return null;
+  }
 
   return (
     <>
