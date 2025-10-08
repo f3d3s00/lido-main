@@ -23,6 +23,7 @@ model ombrellone {
 model ordine {
   id_ordine      Int              @id @default(autoincrement())
   id_ombrellone  Int
+  id_sessione     String    
   data_ordine    DateTime         @default(now())
   stato_ordine   String
   ombrellone     ombrellone       @relation(fields: [id_ombrellone], references: [id_ombrellone], onDelete: NoAction, map: "Ordine_id_ombrellone_fkey")

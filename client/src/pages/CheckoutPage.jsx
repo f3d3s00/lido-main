@@ -3,6 +3,7 @@ import { useTable } from "../context/TableContext";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { createOrder } from "../services/api";
+import { v4 as uuidv4 } from "uuid";
 
 const BACKEND_URL = "http://localhost:4000";
 
@@ -21,7 +22,7 @@ function getRandomProducts(array, count) {
 export default function CheckoutPage() {
   const { cartItems, clearCart, addToCart } = useCart();
   const { tableId } = useTable();
-  const [metodoPagamento, setMetodoPagamento] = useState("CONTANTI"); // default valido
+  const [metodoPagamento, setMetodoPagamento] = useState("CONTANTI");
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(null);
@@ -29,6 +30,15 @@ export default function CheckoutPage() {
   const navigate = useNavigate();
 
   const totale = cartItems.reduce((acc, item) => acc + item.prezzo * item.quantity, 0);
+
+  // 🔹 Genera o recupera id_sessione corrente
+  useEffect(() => {
+    let sessione = localStorage.getItem("sessioneId");
+    if (!sessione) {
+      sessione = uuidv4();
+      localStorage.setItem("sessioneId", sessione);
+    }
+  }, []);
 
   useEffect(() => {
     setSuggested(getRandomProducts(allProducts, 3));
@@ -40,9 +50,12 @@ export default function CheckoutPage() {
     setError(null);
 
     try {
+      const id_sessione = localStorage.getItem("sessioneId"); // 🔹 recupero sessione corrente
+
       const ordine = {
         id_ombrellone: tableId,
-        metodoPagamento, 
+        metodoPagamento,
+        id_sessione, // 🔹 importante
         prodotti: cartItems.map((p) => ({
           id_prodotto: p.id_prodotto,
           quantita: p.quantity,
@@ -54,10 +67,8 @@ export default function CheckoutPage() {
 
       setSuccess(true);
       clearCart();
-
-      //mi manda nella pagina statoOrdine
       navigate(`/ordine/${createdOrder.id_ordine}`);
-      } catch (err) {
+    } catch (err) {
       console.error(err);
       setError(err.message || "Errore nell'invio dell'ordine");
     } finally {
@@ -111,18 +122,21 @@ export default function CheckoutPage() {
 
           <form onSubmit={handleOrder} className="p-4 space-y-4">
             <h2 className="text-xl font-bold">Metodo di pagamento</h2>
-
             <select
               value={metodoPagamento}
               onChange={(e) => setMetodoPagamento(e.target.value)}
-              className="border rounded-lg p-2 w-full">
-
+              className="border rounded-lg p-2 w-full"
+            >
               <option value="CONTANTI">Contanti</option>
-                <option value="CARTA">Carta</option>
-                <option value="CASSA">Cassa</option>
-              </select>
+              <option value="CARTA">Carta</option>
+              <option value="CASSA">Cassa</option>
+            </select>
 
-            <button type="submit" disabled={loading} className="bg-yellow-600 hover:bg-gradient-to-l hover:from-[#ff914D] hover:to-[#ffde59] text-white px-3 py-5 rounded-lg shadow transition ml-2 mr-5">
+            <button
+              type="submit"
+              disabled={loading}
+              className="bg-yellow-600 hover:bg-gradient-to-l hover:from-[#ff914D] hover:to-[#ffde59] text-white px-3 py-5 rounded-lg shadow transition ml-2 mr-5"
+            >
               {loading ? "Invio ordine..." : "Conferma Ordine"}
             </button>
 

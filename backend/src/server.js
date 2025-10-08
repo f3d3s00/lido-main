@@ -6,12 +6,6 @@ dotenv.config();
 
 const PORT = process.env.PORT || 4000;
 
-
-
-app.listen(PORT, () => {
-  console.log(`Server attivo su http://localhost:${PORT}`);
-});
-
 // GET tutti gli ombrelloni
 app.get("/api/ombrelloni", async (req, res) => {
   try {
@@ -66,4 +60,25 @@ app.post("/api/ombrelloni/libera", async (req, res) => {
     console.error(err);
     res.status(500).json({ msg: "Errore del server" });
   }
+});
+
+app.get("/api/ombrelloni/occupati", async (req, res) => {
+  try {
+    const [rows] = await db.query(`
+      SELECT DISTINCT id_ombrellone
+      FROM ordine
+      WHERE stato_ordine IN ('in attesa')
+    `);
+
+    console.log("Ombrelloni occupati:", rows);
+    const ombrelloniOccupati = rows.map(r => r.id_ombrellone);
+    res.json(ombrelloniOccupati);
+  } catch (err) {
+    console.error("Errore nel recupero degli ombrelloni occupati:", err);
+    res.status(500).json({ error: "Errore nel recupero degli ombrelloni occupati" });
+  }
+});
+
+app.listen(PORT, () => {
+  console.log(`Server attivo su http://localhost:${PORT}`);
 });

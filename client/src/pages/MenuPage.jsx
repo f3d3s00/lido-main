@@ -173,11 +173,7 @@ const [activeButton, setActiveButton] = useState(null);
           {selectedCategory ? (
             <CategoryProducts categoryId={selectedCategory.id_categoria} addToCart={addToCart} />
           ) : (
-<<<<<<< HEAD
             <p className="text-[#ff0000] text-center bg-amber-200 rounded-4xl">
-=======
-            <p className="text-black text-center bg-amber-100 rounded-4xl">
->>>>>>> a4902abb4f77caec66c1a122b9e5f5ada21afe72
               Seleziona una categoria per vedere i prodotti</p>
           )}
         </div>

@@ -1,15 +1,15 @@
 import { useTable } from "../context/TableContext";
 import SidebarCategorie from "./SidebarCategorie";
 import { useState } from "react";
-import { useLocation } from "react-router-dom"; // React Router
+import { useLocation } from "react-router-dom"; 
 
 export default function SidebarCategorieButton() {
   const { tableId } = useTable();
   const [open, setOpen] = useState(false);
-  const location = useLocation(); // ottieni il percorso corrente
+  const location = useLocation(); 
 
   // Lista delle pagine in cui vuoi mostrare il pulsante
-  const allowedPages = ["/PaginaIniziale","/menu", "/category"]; // esempio
+  const allowedPages = ["/PaginaIniziale","/menu", "/category"]; 
 
   if (!tableId || !allowedPages.includes(location.pathname)) return null;
 

@@ -98,12 +98,15 @@ const liberaOmbrellone = async (numero_ombrellone) => {
           <div className="mt-4 w-full">
             <h3 className="font-semibold text-lg mb-2">Prodotti ordinati:</h3>
             <ul className="space-y-2">
-              {ordine.ordiniprodotti.map(item => (
-                <li key={item.id_ordiniprodotti} className="flex justify-between border-b pb-1">
-                  <span>{item.prodotto.nome} x {item.quantita}</span>
-                  <span>{(item.prezzo * item.quantita).toFixed(2)} €</span>
-                </li>
-              ))}
+            {ordine.ordiniprodotti.map((item, index) => (
+              <li
+                key={item.id_ordiniprodotti || `${item.id_prodotto}-${index}`}
+                className="flex justify-between border-b pb-1"
+              >
+                <span>{item.prodotto?.nome} x {item.quantita}</span>
+                <span>{(item.prezzo * item.quantita).toFixed(2)} €</span>
+              </li>
+                ))}
             </ul>
           </div>
         </CardContent>
@@ -117,6 +120,14 @@ const liberaOmbrellone = async (numero_ombrellone) => {
         >
           Torna al Menu
         </button>
+
+        <button
+          onClick={() => navigate("/listaOrdini")}
+          className="bg-yellow-600 hover:bg-gradient-to-l hover:from-[#ff914D] hover:to-[#ffde59] text-white px-7 py-4 rounded-lg shadow transition"
+        >
+          Vedi Stato Ordine
+        </button>
+        
         <button
         onClick={async () => {
           if (ordine?.id_ombrellone){
@@ -128,6 +139,7 @@ const liberaOmbrellone = async (numero_ombrellone) => {
       >
         Torna al login
       </button>
+
       </div>
     </div>
   );

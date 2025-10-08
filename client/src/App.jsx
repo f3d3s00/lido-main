@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { CartProvider, useCart } from "./context/CartContext";
 import { TableProvider } from "./context/TableContext";
 import { useLocation } from "react-router-dom";
+import { useState } from "react";
 
 import Home from "./pages/Home"
 import MenuPage from "./pages/MenuPage";
@@ -16,8 +17,7 @@ import { AuthProvider } from "./context/AuthContext";
 import LoginPage from "./pages/LoginPage";
 import PrivateRoute from "./components/PrivateRoute";
 import StatoOrdine from "./pages/statoOrdine";
-
-
+import ListaOrdini from "./pages/listaOrdini";
 
 
 // Componente icona carrello con badge numerico
@@ -49,19 +49,49 @@ function CartIconButton() {
 }
 
 function App() {
+  const [idOmbrellone, setIdOmbrellone] = useState(null);
+  const [sessionOrdini, setSessionOrdini] = useState([]);
   return (
 <TableProvider>
       <CartProvider>
         <Router>
           <AuthProvider>
-            <Routes>
+          <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/PaginaIniziale" element={<PaginaIniziale />} />
-              <Route path="/menu" element={<MenuPage />} />
-              <Route path="/category/:id" element={<CategoryPage />} />
-              <Route path="/checkout" element={<CheckoutPage />} />
+              <Route
+                path="/menu"
+                element={
+                  <MenuPage
+                    idOmbrellone={idOmbrellone}
+                    setIdOmbrellone={setIdOmbrellone}
+                    sessionOrdini={sessionOrdini}
+                    setSessionOrdini={setSessionOrdini}
+                  />
+                }
+              />
+              <Route
+                path="/checkout"
+                element={
+                  <CheckoutPage
+                    idOmbrellone={idOmbrellone}
+                    sessionOrdini={sessionOrdini}
+                    setSessionOrdini={setSessionOrdini}
+                  />
+                }
+              />
+              <Route
+                path="/listaordini"
+                element={
+                  <ListaOrdini
+                    idOmbrellone={idOmbrellone}
+                    sessionOrdini={sessionOrdini}
+                  />
+                }
+              />
+              <Route path="/ordine/:id" element={<StatoOrdine />} />
               <Route path="/login" element={<LoginPage />} />
-              <Route path="/ordine/:id" element={<StatoOrdine />} />              <Route
+              <Route
                 path="/gestione"
                 element={
                   <PrivateRoute>
@@ -70,7 +100,6 @@ function App() {
                 }
               />
             </Routes>
-
             <SidebarCategorieButton />
             <CartSidebar />
             <CartIconButton />
