@@ -39,7 +39,7 @@ export default function GestionePage() {
   const loading = loadingCount > 0;
 
   // -------------------------
-  // FETCH FUNCTIONS (useCallback per stabilità referenze)
+  // FETCH FUNCTIONS 
   // -------------------------
   const fetchOrdini = useCallback(async () => {
     startLoading();
@@ -825,13 +825,39 @@ export default function GestionePage() {
                       <>
                         <input value={editProdotto.nome} onChange={(e) => setEditProdotto({ ...editProdotto, nome: e.target.value })} className="border rounded px-2 py-1 mb-1" />
                         <input value={editProdotto.prezzo} onChange={(e) => setEditProdotto({ ...editProdotto, prezzo: e.target.value })} className="border rounded px-2 py-1 mb-1" />
+                        <input value={editProdotto.descrizione} onChange={(e) => setEditProdotto({ ...editProdotto, descrizione: e.target.value })} className="border rounded px-2 py-1 mb-1" />
+                        <label htmlFor="categoria" className="mb-1 font-medium text-gray-700">
+                    Categoria <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    id="categoria"
+                    required
+                    className="border border-gray-300 rounded-md px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-lime-500"
+                    value={editProdotto.id_categoria}
+                    onChange={(e) => setEditProdotto({ ...editProdotto, id_categoria: e.target.value })}
+                  >
+                    <option value="">Seleziona categoria</option>
+                    {categorie.map((cat) => (
+                      <option key={cat.id_categoria} value={cat.id_categoria}>
+                        {cat.denominazione}
+                      </option>
+                    ))}
+                  </select>
+
                         <input
                     id="img_prodotto"
                     type="file"
                     accept="image/*"
                     className="border border-gray-300 rounded-md px-3 py-2 cursor-pointer focus:outline-none focus:ring-2 focus:ring-lime-500"
-                    onChange={(e) => e.target.files[0] && handleUploadImage(e.target.files[0])}
+                    onChange={(e) => e.target.files[0] && handleUploadImage(e.target.files[0], true)}
                   />
+                  {editProdotto.img_prodotto && (
+                        <img
+                          src={editProdotto.img_prodotto}
+                          alt="Anteprima nuova immagine"
+                          className="w-full h-32 object-contain rounded-md mt-2"
+                        />
+                      )}
 
                         <div className="mt-2 flex gap-2">
                           <button onClick={salvaModificaProdotto} className="bg-green-500 text-white px-3 py-1 rounded">💾 Salva</button>

@@ -11,7 +11,7 @@ import CategoryPage from "./pages/CategoryPage";
 import PaginaIniziale from "./pages/PaginaIniziale";
 import CheckoutPage from "./pages/CheckoutPage";
 import CartSidebar from "./components/CartSidebar";
-import SidebarCategorieButton from "./components/SidebarCategorieButton";
+//import SidebarCategorieButton from "./components/SidebarCategorieButton";
 import GestionePage from "./pages/GestionePage";
 import { AuthProvider } from "./context/AuthContext";
 import LoginPage from "./pages/LoginPage";
@@ -100,7 +100,7 @@ function App() {
                 }
               />
             </Routes>
-            <SidebarCategorieButton />
+
             <CartSidebar />
             <CartIconButton />
           </AuthProvider>

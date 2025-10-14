@@ -48,16 +48,16 @@ const [activeButton, setActiveButton] = useState(null);
         if (!res.ok) throw new Error("Errore nel caricamento dell'ombrellone");
         const data = await res.json();
     
-        console.log("🌴 Ombrelloni ricevuti dal server:", data);
+        console.log("Ombrelloni ricevuti dal server:", data);
     
-        // ✅ Trova il primo ombrellone occupato
+        
         const occupato = data.find((o) => o.stato_ombrellone === "occupato");
     
         if (occupato) {
           setIdOmbrellone(occupato.id_ombrellone);
-          console.log("✅ idOmbrellone impostato su:", occupato.id_ombrellone);
+          console.log("idOmbrellone impostato su:", occupato.id_ombrellone);
         } else {
-          console.warn("⚠️ Nessun ombrellone occupato trovato");
+          console.warn("Nessun ombrellone occupato trovato");
         }
       } catch (err) {
         console.error(err);
@@ -71,7 +71,7 @@ const [activeButton, setActiveButton] = useState(null);
 
   // Funzione per chiamare il cameriere
   const handleCallWaiter = async () => {
-    console.log("📦 idOmbrellone al momento del click:", idOmbrellone);
+    console.log("idOmbrellone al momento del click:", idOmbrellone);
     if (!idOmbrellone) return alert("ID ombrellone non disponibile");
     try {
       await fetch("http://localhost:4000/api/richiesteCameriere", {
@@ -237,7 +237,9 @@ function CategoryProducts({ categoryId, addToCart }) {
           <h3 className="text-xl font-bold text-black">{product.nome}</h3>
           {product.descrizione && <p className="text-gray-700 italic mb-2">{product.descrizione}</p>}
           <p className="text-red-700 mt-1 font-semibold text-xl">€ {(Number(product.prezzo) || 0).toFixed(2)}</p>
-          <button onClick={() => addToCart(product)} className="w-full mt-3 bg-[#e8af20] text-black text-l py-3 rounded-xl shadow-md hover:from-[#ffde59] hover:to-[#ff914D] transition font-bold">
+          <button onClick={() => addToCart(product)} 
+          className="w-full mt-3 bg-[#e8af20] text-black text-l py-3 rounded-xl shadow-md hover:from-[#ffde59] hover:to-[#ff914D] transition font-bold"
+          >
             Aggiungi al carrello
           </button>
         </div>
@@ -246,11 +248,18 @@ function CategoryProducts({ categoryId, addToCart }) {
   );
 }
 
+
 // Componente ricerca live dei prodotti
 function ProductSearch({ addToCart }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [allProducts, setAllProducts] = useState([]);
   const [loading, setLoading] = useState(false);
+  const { cart } = useCart(); 
+
+  //funzione che controlla se un prodotto è già nel carrello
+  const isInCart = (product) => {
+    return cart?.some((item) => item.id_prodotto === product.id_prodotto);
+  };
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -275,7 +284,6 @@ function ProductSearch({ addToCart }) {
     p.nome.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  // ❗ Il return deve essere **dentro la funzione**
   return (
     <div className="mt-4 flex flex-col gap-2">
       <input
@@ -295,11 +303,22 @@ function ProductSearch({ addToCart }) {
       {productResults.length > 0 && (
         <div className="mt-2 max-h-64 overflow-y-auto flex flex-col gap-2">
           {productResults.map((p) => (
-            <div key={p.id_prodotto || p.id} className="p-2 bg-yellow-100 rounded-lg flex justify-between items-center">
-              <span>{p.nome}</span>
-              <button onClick={() => addToCart(p)} className="bg-[#ff914D] text-white px-2 py-1 rounded-lg text-sm">
-                Aggiungi
-              </button>
+            <div
+              key={p.id_prodotto || p.id}
+              className="p-2 bg-yellow-100 rounded-lg flex justify-between items-center gap-2"
+            >
+              <span className="flex-1">{p.nome}</span>
+              <button
+              onClick={() => addToCart(p)}
+              disabled={isInCart(p)} 
+              className={`px-4 py-2 rounded-xl shadow-md font-bold transition-colors duration-300 text-sm
+                ${isInCart(p)
+                  ? "bg-green-500 text-white cursor-pointer"
+                  : "bg-[#e8af20] text-black hover:bg-orange-300 active:bg-orange-400"
+                }`}
+            >
+              {isInCart(p) ? "Nel carrello" : "Aggiungi"}
+            </button>
             </div>
           ))}
         </div>
