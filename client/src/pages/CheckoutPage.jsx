@@ -127,9 +127,9 @@ export default function CheckoutPage() {
               onChange={(e) => setMetodoPagamento(e.target.value)}
               className="border rounded-lg p-2 w-full"
             >
-              <option value="CONTANTI">Contanti</option>
-              <option value="CARTA">Carta</option>
-              <option value="CASSA">Cassa</option>
+              <option value="CONTANTI">Contanti al cameriere</option>
+              <option value="CARTA">Carta al cameriere</option>
+              <option value="CASSA">Paga alla cassa </option>
             </select>
 
             <button

@@ -11,6 +11,7 @@ router.post("/", (req, res) => {
   try {
     const { id_ombrellone } = req.body;
     if (!id_ombrellone) {
+      console.log(id_ombrellone)
       return res.status(400).json({ error: "id_ombrellone mancante" });
     }
 

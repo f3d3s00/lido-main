@@ -47,11 +47,23 @@ const [activeButton, setActiveButton] = useState(null);
         const res = await fetch("http://localhost:4000/api/ombrellone");
         if (!res.ok) throw new Error("Errore nel caricamento dell'ombrellone");
         const data = await res.json();
-        setIdOmbrellone(data.id_ombrellone);
+    
+        console.log("🌴 Ombrelloni ricevuti dal server:", data);
+    
+        // ✅ Trova il primo ombrellone occupato
+        const occupato = data.find((o) => o.stato_ombrellone === "occupato");
+    
+        if (occupato) {
+          setIdOmbrellone(occupato.id_ombrellone);
+          console.log("✅ idOmbrellone impostato su:", occupato.id_ombrellone);
+        } else {
+          console.warn("⚠️ Nessun ombrellone occupato trovato");
+        }
       } catch (err) {
         console.error(err);
       }
     };
+    
 
     fetchCategories();
     fetchOmbrellone();
@@ -59,6 +71,7 @@ const [activeButton, setActiveButton] = useState(null);
 
   // Funzione per chiamare il cameriere
   const handleCallWaiter = async () => {
+    console.log("📦 idOmbrellone al momento del click:", idOmbrellone);
     if (!idOmbrellone) return alert("ID ombrellone non disponibile");
     try {
       await fetch("http://localhost:4000/api/richiesteCameriere", {
