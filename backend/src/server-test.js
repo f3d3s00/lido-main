@@ -22,10 +22,10 @@ const categorie = [
 ];
 
 const prodotti = [
-  { id_prodotto: 1, descrizione: "Coca Cola", prezzo: 2.5, disponibilita: true, id_categoria: 1, img_prodotto: "/img/coca.jpg" },
-  { id_prodotto: 2, descrizione: "Fanta", prezzo: 2.5, disponibilita: true, id_categoria: 1, img_prodotto: "/img/fanta.jpg" },
-  { id_prodotto: 3, descrizione: "Patatine", prezzo: 1.5, disponibilita: true, id_categoria: 2, img_prodotto: "/img/patatine.jpg" },
-  { id_prodotto: 4, descrizione: "Cornetto", prezzo: 1.2, disponibilita: true, id_categoria: 3, img_prodotto: "/img/cornetto.jpg" },
+  { id_prodotto: 1, nome: "Coca Cola", prezzo: 2.5, disponibilita: true, id_categoria: 1, img_prodotto: "/img/coca.jpg" },
+  { id_prodotto: 2, nome: "Fanta", prezzo: 2.5, disponibilita: true, id_categoria: 1, img_prodotto: "/img/fanta.jpg" },
+  { id_prodotto: 3, nome: "Patatine", prezzo: 1.5, disponibilita: true, id_categoria: 2, img_prodotto: "/img/patatine.jpg" },
+  { id_prodotto: 4, nome: "Cornetto", prezzo: 1.2, disponibilita: true, id_categoria: 3, img_prodotto: "/img/cornetto.jpg" },
   // ... aggiungi altri prodotti fino a 30
 ];
 
@@ -45,5 +45,5 @@ app.get("/api/prodotti", (req, res) => {
 });
 
 // Avvio server
-const PORT = 5000;
+const PORT = 4000;
 app.listen(PORT, () => console.log(`Server di test attivo su http://localhost:${PORT}`));

@@ -7,7 +7,7 @@ export default function CartPage() {
     <div className="p-4 max-w-md mx-auto">
       <h1 className="text-xl font-bold mb-4">Il tuo carrello</h1>
       {cartItems.length === 0 ? (
-        <p>Il carrello è vuoto</p>
+        <p>Il carrello è vuotooo</p>
       ) : (
         <>
           <div className="flex flex-col gap-2">
@@ -17,7 +17,7 @@ export default function CartPage() {
                 className="flex justify-between items-center p-2 bg-white rounded shadow"
               >
                 <span>
-                  {item.descrizione} x {item.quantity} - € {(item.prezzo * item.quantity).toFixed(2)}
+                  {item.nome} x {item.quantity} - € {(item.prezzo * item.quantity).toFixed(2)}
                 </span>
                 <button
                   onClick={() => removeFromCart(item.id_prodotto)} // MODIFICATO: usa id_prodotto

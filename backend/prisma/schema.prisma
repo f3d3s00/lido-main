@@ -1,6 +1,5 @@
 generator client {
-  provider      = "prisma-client-js"
-  binaryTargets = ["native", "darwin-arm64"]
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -9,59 +8,35 @@ datasource db {
 }
 
 model categoria {
-  id_categoria   Int        @id @default(autoincrement())
-  denominazione  String
-  prodotto       prodotto[]
+  id_categoria  Int        @id @default(autoincrement())
+  denominazione String
+  prodotto      prodotto[]
 }
 
 model ombrellone {
-  id_ombrellone     Int      @id @default(autoincrement())
-  fila              String
+  id_ombrellone     Int                         @id @default(autoincrement())
   numero_ombrellone Int
-  stato_ombrellone  String
+  stato_ombrellone  ombrellone_stato_ombrellone @default(libero)
   ordine            ordine[]
-}
-
-model ombrelloni {
-  id_ombrellone     Int      @id @default(autoincrement())
-  fila              String?  @db.VarChar(10)
-  numero_ombrellone Int?
-  stato_ombrellone  String?  @db.VarChar(50)
-  ordini            ordini[]
 }
 
 model ordine {
   id_ordine      Int              @id @default(autoincrement())
   id_ombrellone  Int
+  id_sessione     String    
   data_ordine    DateTime         @default(now())
   stato_ordine   String
-  ombrellone     ombrellone       @relation(fields: [id_ombrellone], references: [id_ombrellone], map: "Ordine_id_ombrellone_fkey")
+  ombrellone     ombrellone       @relation(fields: [id_ombrellone], references: [id_ombrellone], onDelete: NoAction, map: "Ordine_id_ombrellone_fkey")
   ordiniprodotti ordiniprodotti[]
+  metodoPagamento  PaymentMethod?
 
   @@index([id_ombrellone], map: "Ordine_id_ombrellone_fkey")
 }
 
-model ordini {
-  id_ordine       Int               @id @default(autoincrement())
-  id_ombrellone   Int?
-  data_ordine     DateTime?         @default(now()) @db.DateTime(0)
-  stato_ordine    String?           @db.VarChar(50)
-  ombrelloni      ombrelloni?       @relation(fields: [id_ombrellone], references: [id_ombrellone], onDelete: NoAction, onUpdate: NoAction, map: "ordini_ibfk_1")
-  ordini_prodotti ordini_prodotti[]
-
-  @@index([id_ombrellone], map: "id_ombrellone")
-}
-
-model ordini_prodotti {
-  id_ordine_prodotto Int       @id @default(autoincrement())
-  id_ordfine         Int?
-  id_prodotto        Int?
-  quantita           Int?
-  prezzo             Decimal?  @db.Decimal(10, 2)
-  ordini             ordini?   @relation(fields: [id_ordfine], references: [id_ordine], onDelete: NoAction, onUpdate: NoAction, map: "ordini_prodotti_ibfk_1")
-
-  @@index([id_ordfine], map: "id_ordfine")
-  @@index([id_prodotto], map: "id_prodotto")
+enum PaymentMethod {
+  CONTANTI
+  CARTA
+  CASSA
 }
 
 model ordiniprodotti {
@@ -70,21 +45,28 @@ model ordiniprodotti {
   id_prodotto        Int
   quantita           Int
   prezzo             Float
-  ordine             ordine   @relation(fields: [id_ordine], references: [id_ordine], map: "OrdiniProdotti_id_ordine_fkey")
-  prodotto           prodotto @relation(fields: [id_prodotto], references: [id_prodotto], map: "OrdiniProdotti_id_prodotto_fkey")
+  ordine             ordine   @relation(fields: [id_ordine], references: [id_ordine], onDelete: NoAction, map: "OrdiniProdotti_id_ordine_fkey")
+  prodotto           prodotto @relation(fields: [id_prodotto], references: [id_prodotto], onDelete: NoAction, map: "OrdiniProdotti_id_prodotto_fkey")
 
   @@index([id_ordine], map: "OrdiniProdotti_id_ordine_fkey")
   @@index([id_prodotto], map: "OrdiniProdotti_id_prodotto_fkey")
 }
 
-
 model prodotto {
   id_prodotto    Int              @id @default(autoincrement())
-  descrizione    String
+  nome           String
   prezzo         Float
   disponibilita  Boolean          @default(true)
   img_prodotto   String?
   id_categoria   Int
-  categoria      categoria        @relation(fields: [id_categoria], references: [id_categoria])
+  descrizione    String?          @db.VarChar(255)
   ordiniprodotti ordiniprodotti[]
+  categoria      categoria        @relation(fields: [id_categoria], references: [id_categoria], onDelete: NoAction)
+
+  @@index([id_categoria], map: "prodotto_id_categoria_fkey")
+}
+
+enum ombrellone_stato_ombrellone {
+  libero
+  occupato
 }

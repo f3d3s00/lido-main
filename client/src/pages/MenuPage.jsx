@@ -1,6 +1,7 @@
-// src/pages/MenuPage.jsx
 import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import { useCart } from "../context/CartContext";
+import Header from "../components/Header";
 
 export default function MenuPage() {
   const [categories, setCategories] = useState([]);
@@ -8,7 +9,18 @@ export default function MenuPage() {
   const [loadingCategories, setLoadingCategories] = useState(true);
   const [errorCategories, setErrorCategories] = useState(null);
   const { addToCart } = useCart();
+  const [searchParams] = useSearchParams();
+const [activeButton, setActiveButton] = useState(null);
 
+
+  // Stati per il pop-up
+  const [modalVisible, setModalVisible] = useState(false);
+  const [productSearchVisible, setProductSearchVisible] = useState(false);
+
+  // Stato per id_ombrellone
+  const [idOmbrellone, setIdOmbrellone] = useState(null);
+
+  // Carica le categorie
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -16,6 +28,12 @@ export default function MenuPage() {
         if (!res.ok) throw new Error("Errore nel caricamento delle categorie");
         const data = await res.json();
         setCategories(data);
+
+        const catId = searchParams.get("categoria");
+        if (catId) {
+          const found = data.find((c) => String(c.id_categoria) === String(catId));
+          if (found) setSelectedCategory(found);
+        }
       } catch (err) {
         console.error(err);
         setErrorCategories(err.message);
@@ -23,42 +41,168 @@ export default function MenuPage() {
         setLoadingCategories(false);
       }
     };
+
+    const fetchOmbrellone = async () => {
+      try {
+        const res = await fetch("http://localhost:4000/api/ombrellone");
+        if (!res.ok) throw new Error("Errore nel caricamento dell'ombrellone");
+        const data = await res.json();
+    
+        console.log("Ombrelloni ricevuti dal server:", data);
+    
+        
+        const occupato = data.find((o) => o.stato_ombrellone === "occupato");
+    
+        if (occupato) {
+          setIdOmbrellone(occupato.id_ombrellone);
+          console.log("idOmbrellone impostato su:", occupato.id_ombrellone);
+        } else {
+          console.warn("Nessun ombrellone occupato trovato");
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    
+
     fetchCategories();
-  }, []);
+    fetchOmbrellone();
+  }, [searchParams]);
+
+  // Funzione per chiamare il cameriere
+  const handleCallWaiter = async () => {
+    console.log("idOmbrellone al momento del click:", idOmbrellone);
+    if (!idOmbrellone) return alert("ID ombrellone non disponibile");
+    try {
+      await fetch("http://localhost:4000/api/richiesteCameriere", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id_ombrellone: idOmbrellone }),
+      });
+      alert("Il cameriere è stato avvisato!");
+      setModalVisible(false);
+    } catch (err) {
+      console.error(err);
+      alert("Errore nell’invio della richiesta");
+    }
+  };
 
   if (loadingCategories) return <p>Caricamento categorie...</p>;
   if (errorCategories) return <p className="text-red-500">{errorCategories}</p>;
 
   return (
-    <div className="bg-gradient-to-b from-lime-50 to-lime-600 min-h-screen p-4">
-      <div className="max-w-md mx-auto">
-        <div className="flex flex-col gap-2 mb-6">
-          {categories.map((cat) => (
-            <button
-              key={cat.id_categoria}
-              className={`w-full px-4 py-3 rounded-2xl font-semibold transition shadow hover:shadow-lg active:scale-95 ${
-                selectedCategory?.id_categoria === cat.id_categoria
-                  ? "bg-lime-500 text-white"
-                  : "bg-white hover:bg-lime-100 text-gray-800"
-              }`}
-              onClick={() => setSelectedCategory(cat)}
-            >
-              {cat.denominazione}
-            </button>
-          ))}
-        </div>
+    <div className="relative min-h-screen flex flex-col">
+      <div className="absolute inset-0 z-10 bg-[url('/img/sfondo.png')] bg-center bg-no-repeat bg-fixed bg-contain" />
+      <div className="absolute inset-0 z-0 bg-gradient-to-r from-[#ffde59] to-[#ff914D]" />
 
-        {selectedCategory ? (
-          <CategoryProducts categoryId={selectedCategory.id_categoria} addToCart={addToCart} />
-        ) : (
-          <p className="text-gray-600 text-center">Seleziona una categoria per vedere i prodotti.</p>
-        )}
-      </div>
+      <Header />
+
+      {/* Pulsante Richiesta */}
+      <button
+        onClick={() => setModalVisible(true)}
+        className="fixed text-3xl text-black top-22 right-7 p-3 transform transition-transform duration-300 z-50 rounded-4xl shadow border-orange-700 bg-gradient-to-r from-amber-110 to-[#ffda6a]"
+        > 𝒊 </button>
+
+      {/* Modal principale */}
+      {modalVisible && (
+        <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/50">
+          <div className="bg-white rounded-xl p-6 w-80 flex flex-col gap-4 relative">
+            <h2 className="text-xl font-bold text-center">Seleziona azione</h2>
+
+            {/* Pulsante Cameriere */}
+            <button
+              onClick={() => {
+                setActiveButton("waiter");
+                handleCallWaiter();
+              }}
+              className={`w-full mt-3 bg-[#e8af20] text-black text-l py-3 rounded-xl shadow-md transition font-bold
+                ${
+                  activeButton === "waiter"
+                    ? "text-white border-orange-500"
+                    : "text-black hover:bg-orange-100/80"
+                }`}
+            >
+              Richiedi Cameriere
+            </button>
+
+            {/* Pulsante Ricerca Prodotto */}
+            <button
+              onClick={() => {
+                setActiveButton("search");
+                setProductSearchVisible(true);
+              }}
+              className={`w-full mt-3 bg-[#e8af20] text-black text-l py-3 rounded-xl shadow-md transition font-bold
+                ${
+                  activeButton === "search"
+                    ? "text-white border-orange-500"
+                    : "text-black hover:bg-orange-100/80"
+                }`}
+            >
+              Ricerca Prodotto
+            </button>
+
+            {/* Pulsante Chiudi */}
+            <button
+              onClick={() => {
+                setActiveButton(null); // reset
+                setModalVisible(false);
+              }}
+              className="w-full mt-3 bg-gray-300 text-black py-2 rounded-3xl font-bold"
+            >
+              Chiudi
+            </button>
+
+            {/* Ricerca prodotto live */}
+            {productSearchVisible && <ProductSearch addToCart={addToCart} />}
+          </div>
+        </div>
+      )}
+
+      {/* Contenuto principale */}
+      <main className="relative z-20 flex-1 flex flex-col items-center justify-start p-6">
+        <div className="w-full max-w-md rounded-2xl shadow-xl p-6 flex flex-col gap-6">
+          <div className="flex flex-col gap-4 mb-9 mt-25">
+            {categories.map((cat) => (
+              <button
+                key={cat.id_categoria}
+                className={`w-full mt-3 bg-amber-300 text-black text-l py-3 rounded-xl shadow-md hover:from-[#ffde59] hover:to-[#ff914D] transition font-bold ${
+                  selectedCategory?.id_categoria === cat.id_categoria
+                    ? " text-red-500 border-orange-500"
+                    : " text-black hover:bg-orange-100/80"
+                }`}
+                onClick={() => {
+                  if (selectedCategory?.id_categoria === cat.id_categoria) {
+                    setSelectedCategory(null);
+                  } else {
+                    setSelectedCategory(cat);
+                  }
+                }}
+              >
+                {cat.denominazione}
+              </button>
+            ))}
+          </div>
+
+          {selectedCategory ? (
+            <CategoryProducts categoryId={selectedCategory.id_categoria} addToCart={addToCart} />
+          ) : (
+            <p className="text-[#ff0000] text-center bg-amber-200 rounded-4xl">
+              Seleziona una categoria per vedere i prodotti</p>
+          )}
+        </div>
+      </main>
+
+      <footer className="relative z-30 w-full bg-gradient-to-r from-[#ffda6a] to-[#fff7de] p-5 shadow flex flex-col items-center justify-center text-center">
+        <p className="text-black text-lg sm:text-2xl md:text-3xl break-words whitespace-pre-line leading-tight">
+          © 2025 Lido Acqua Serena<br className="block sm:hidden" />
+          Tutti i diritti riservati
+        </p>
+      </footer>
     </div>
   );
 }
 
-// Componente interno per caricare prodotti di una categoria
+// Componente per visualizzare prodotti per categoria
 function CategoryProducts({ categoryId, addToCart }) {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -86,27 +230,99 @@ function CategoryProducts({ categoryId, addToCart }) {
   if (products.length === 0) return <p className="text-gray-500 text-center">Nessun prodotto disponibile.</p>;
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-5">
       {products.map((product) => (
-        <div
-          key={product.id_prodotto}
-          className="bg-white rounded-3xl shadow-md hover:shadow-xl transition p-4 flex flex-col"
-        >
-          <img
-            src={product.img_prodotto}
-            alt={product.descrizione}
-            className="w-full h-48 object-cover rounded-2xl mb-3"
-          />
-          <h3 className="text-lg font-bold text-gray-800">{product.descrizione}</h3>
-          <p className="text-gray-600 mt-1">€ {(Number(product.prezzo) || 0).toFixed(2)}</p>
-          <button
-            onClick={() => addToCart(product)}
-            className="mt-3 bg-lime-400 hover:bg-lime-500 text-gray-900 font-semibold px-5 py-2 rounded-full shadow hover:shadow-lg active:scale-95 transition"
+        <div key={product.id_prodotto} className="rounded-3xl shadow-xl hover:shadow-2xl transition p-4 flex flex-col bg-white border border-amber-400">
+          <img src={product.img_prodotto} alt={product.nome} className="w-full h-48 object-contain rounded-2xl mb-3" />
+          <h3 className="text-xl font-bold text-black">{product.nome}</h3>
+          {product.descrizione && <p className="text-gray-700 italic mb-2">{product.descrizione}</p>}
+          <p className="text-red-700 mt-1 font-semibold text-xl">€ {(Number(product.prezzo) || 0).toFixed(2)}</p>
+          <button onClick={() => addToCart(product)} 
+          className="w-full mt-3 bg-[#e8af20] text-black text-l py-3 rounded-xl shadow-md hover:from-[#ffde59] hover:to-[#ff914D] transition font-bold"
           >
             Aggiungi al carrello
           </button>
         </div>
       ))}
+    </div>
+  );
+}
+
+
+// Componente ricerca live dei prodotti
+function ProductSearch({ addToCart }) {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [allProducts, setAllProducts] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const { cart } = useCart(); 
+
+  //funzione che controlla se un prodotto è già nel carrello
+  const isInCart = (product) => {
+    return cart?.some((item) => item.id_prodotto === product.id_prodotto);
+  };
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      setLoading(true);
+      try {
+        const res = await fetch(`http://localhost:4000/api/prodotti`);
+        if (!res.ok) throw new Error("Errore nel caricamento prodotti");
+        const data = await res.json();
+        setAllProducts(data);
+      } catch (err) {
+        console.error(err);
+        setAllProducts([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProducts();
+  }, []);
+
+  // Filtra i prodotti in base alla query
+  const productResults = allProducts.filter((p) =>
+    p.nome.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  return (
+    <div className="mt-4 flex flex-col gap-2">
+      <input
+        type="text"
+        placeholder="Cerca prodotto..."
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        className="border p-2 rounded-lg"
+      />
+
+      {loading && <p className="text-gray-500 text-center">Caricamento...</p>}
+
+      {productResults.length === 0 && searchQuery.trim() && !loading && (
+        <p className="text-red-500 text-center">Nessun prodotto trovato</p>
+      )}
+
+      {productResults.length > 0 && (
+        <div className="mt-2 max-h-64 overflow-y-auto flex flex-col gap-2">
+          {productResults.map((p) => (
+            <div
+              key={p.id_prodotto || p.id}
+              className="p-2 bg-yellow-100 rounded-lg flex justify-between items-center gap-2"
+            >
+              <span className="flex-1">{p.nome}</span>
+              <button
+              onClick={() => addToCart(p)}
+              disabled={isInCart(p)} 
+              className={`px-4 py-2 rounded-xl shadow-md font-bold transition-colors duration-300 text-sm
+                ${isInCart(p)
+                  ? "bg-green-500 text-white cursor-pointer"
+                  : "bg-[#e8af20] text-black hover:bg-orange-300 active:bg-orange-400"
+                }`}
+            >
+              {isInCart(p) ? "Nel carrello" : "Aggiungi"}
+            </button>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

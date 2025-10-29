@@ -1,1 +1,25 @@
 @import "tailwindcss";
+
+.font-title{
+    font-family: "Sacramento", cursive;
+}
+
+.font-menu{
+    font-family: "Mochiy Pop One", sans-serif;
+}
+
+.bg-ship{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: .5;
+}
+
+.bg-granchio{
+    position: absolute;
+    bottom: 0;
+    left: -90px;
+    opacity: .5;
+    max-width: 50%;
+}
