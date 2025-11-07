@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 
@@ -54,7 +54,7 @@ export default function PaginaIniziale() {
               onClick={goToMenu}
                 className="bg-yellow-600 hover:bg-gradient-to-l hover:from-[#ff914D] hover:to-[#ffde59] text-white px-10 py-5 rounded-lg shadow transition"
                >
-               Menu'
+               Ordina
               </button>
               </div>
         </div>
