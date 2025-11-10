@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { useCart } from "../context/CartContext";
 import Header from "../components/Header";
+import { useCart } from "../context/CartContext";
 
 export default function MenuPage() {
   const [categories, setCategories] = useState([]);
@@ -193,7 +193,7 @@ const [activeButton, setActiveButton] = useState(null);
       </main>
 
       <footer className="relative z-30 w-full bg-gradient-to-r from-[#ffda6a] to-[#fff7de] p-5 shadow flex flex-col items-center justify-center text-center">
-        <p className="text-black text-lg sm:text-2xl md:text-3xl break-words whitespace-pre-line leading-tight">
+        <p className="text-[#ff3131] text-lg sm:text-2xl md:text-3xl break-words whitespace-pre-line leading-tight">
           © 2025 Lido Acqua Serena<br className="block sm:hidden" />
           Tutti i diritti riservati
         </p>
