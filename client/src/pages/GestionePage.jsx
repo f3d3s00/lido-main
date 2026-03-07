@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Card, CardContent } from "../components/ui/card";
 
 export default function GestionePage() {
@@ -222,6 +222,7 @@ export default function GestionePage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ denominazione: editCategoria.denominazione }),
       });
+      console.log(res);
       if (!res.ok) throw new Error("Errore modifica categoria");
       setEditCategoria(null);
       fetchCategorie();

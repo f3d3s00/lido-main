@@ -45,4 +45,31 @@ router.get("/", async (req, res) => {
   }
 });
 
+router.put('/:id_categoria', async (req, res) => {
+  const { id_categoria } = req.params;
+  const { denominazione } = req.body;
+
+  if (!denominazione) {
+    return res.status(400).json({ message: 'Il campo denominazione è obbligatorio' });
+  }
+
+  try {
+    const [result] = await pool.query(
+      'UPDATE categoria SET denominazione = ? WHERE id_categoria = ?',
+      [denominazione, id_categoria]
+    );
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: "Categoria non trovata" });
+    }
+
+    res.json({ id_categoria, denominazione });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Errore durante la modifica della categoria" });
+  }
+});
+
+
+
 export default router;

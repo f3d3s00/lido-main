@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 
@@ -54,7 +54,7 @@ export default function PaginaIniziale() {
               onClick={goToMenu}
                 className="bg-yellow-600 hover:bg-gradient-to-l hover:from-[#ff914D] hover:to-[#ffde59] text-white px-10 py-5 rounded-lg shadow transition"
                >
-               Menu'
+               Ordina
               </button>
               </div>
         </div>
@@ -62,7 +62,7 @@ export default function PaginaIniziale() {
 
          {/* FOOTER */}
          <footer className="w-full text-4xl justify-center text-center font-vivaldi text-red-700 bg-gradient-to-r from-[#ffda6a] to-[#fff7de]  p-6 shadow">
-            <p className="text-orange-700 text-lg">
+            <p className="text-[#ff3131] text-lg">
                  © 2025 Lido Acqua Serena - Tutti i diritti riservati
             </p>
         </footer>
